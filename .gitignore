@@ -1,0 +1,11 @@
+*.so
+*.o
+*.gif
+*.bmp
+*.vai
+*.swp
+draw_bars
+draw_cube
+draw_lines
+draw_triangles
+parse_gif
