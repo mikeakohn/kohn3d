@@ -3,30 +3,30 @@
 #define PY_SSIZE_T_CLEAN
 #include <Python.h>
 
-#include "GifFactory.h"
+#include "Kohn3D.h"
 
 typedef struct
 {
   PyObject_HEAD
-  GifFactory *gif_factory;
-} PyGifFactoryObject;
+  Kohn3D *kohn3d;
+} PyKohn3DObject;
 
-static void gif_factory_dealloc(PyGifFactoryObject *object)
+static void kohn3d_dealloc(PyKohn3DObject *object)
 {
-  delete object->gif_factory;
-  object->gif_factory = NULL;
+  delete object->kohn3d;
+  object->kohn3d = NULL;
   Py_DECREF(object);
   PyObject_Del(object);
 }
 
-PyTypeObject gif_factory_type =
+PyTypeObject kohn3d_type =
 {
   PyObject_HEAD_INIT(0)
   //0,
-  "GifFactory",
-  sizeof(PyGifFactoryObject),
+  "Kohn3D",
+  sizeof(PyKohn3DObject),
   0,
-  (destructor)gif_factory_dealloc,
+  (destructor)kohn3d_dealloc,
 };
 
 static PyObject *create(
@@ -41,11 +41,11 @@ static PyObject *create(
     return NULL;
   }
 
-  PyGifFactoryObject *object = PyObject_NEW(PyGifFactoryObject, &gif_factory_type);
+  PyKohn3DObject *object = PyObject_NEW(PyKohn3DObject, &kohn3d_type);
   Py_INCREF(object);
 
-  object->gif_factory = new GifFactory(width, height);
-  object->gif_factory->create(filename);
+  object->kohn3d = new Kohn3D(width, height);
+  object->kohn3d->create(filename);
 
   return (PyObject *)object;
 }
@@ -54,16 +54,16 @@ static PyObject *finish(
   PyObject *self,
   PyObject *args)
 {
-  PyGifFactoryObject *object;
+  PyKohn3DObject *object;
 
   if (!PyArg_ParseTuple(args, "O", &object))
   {
     return NULL;
   }
 
-  object->gif_factory->finish();
-  delete object->gif_factory;
-  object->gif_factory = NULL;
+  object->kohn3d->finish();
+  delete object->kohn3d;
+  object->kohn3d = NULL;
 
   return Py_None;
 }
@@ -72,7 +72,7 @@ static PyObject *add_color(
   PyObject *self,
   PyObject *args)
 {
-  PyGifFactoryObject *object;
+  PyKohn3DObject *object;
   int value;
 
   if (!PyArg_ParseTuple(args, "Oi", &object, &value))
@@ -80,7 +80,7 @@ static PyObject *add_color(
     return NULL;
   }
 
-  object->gif_factory->add_color(value);
+  object->kohn3d->add_color(value);
 
   return Py_None;
 }
@@ -89,7 +89,7 @@ static PyObject *set_bg_color_index(
   PyObject *self,
   PyObject *args)
 {
-  PyGifFactoryObject *object;
+  PyKohn3DObject *object;
   int value;
 
   if (!PyArg_ParseTuple(args, "Oi", &object, &value))
@@ -97,7 +97,7 @@ static PyObject *set_bg_color_index(
     return NULL;
   }
 
-  object->gif_factory->set_bg_color_index(value);
+  object->kohn3d->set_bg_color_index(value);
 
   return Py_None;
 }
@@ -106,7 +106,7 @@ static PyObject *set_transparent_color_index(
   PyObject *self,
   PyObject *args)
 {
-  PyGifFactoryObject *object;
+  PyKohn3DObject *object;
   int value;
 
   if (!PyArg_ParseTuple(args, "Oi", &object, &value))
@@ -114,7 +114,7 @@ static PyObject *set_transparent_color_index(
     return NULL;
   }
 
-  object->gif_factory->set_transparent_color_index(value);
+  object->kohn3d->set_transparent_color_index(value);
 
   return Py_None;
 }
@@ -123,7 +123,7 @@ static PyObject *set_delay(
   PyObject *self,
   PyObject *args)
 {
-  PyGifFactoryObject *object;
+  PyKohn3DObject *object;
   int value;
 
   if (!PyArg_ParseTuple(args, "Oi", &object, &value))
@@ -131,7 +131,7 @@ static PyObject *set_delay(
     return NULL;
   }
 
-  object->gif_factory->set_delay(value);
+  object->kohn3d->set_delay(value);
 
   return Py_None;
 }
@@ -140,7 +140,7 @@ static PyObject *set_loop_count(
   PyObject *self,
   PyObject *args)
 {
-  PyGifFactoryObject *object;
+  PyKohn3DObject *object;
   int value;
 
   if (!PyArg_ParseTuple(args, "Oi", &object, &value))
@@ -148,7 +148,7 @@ static PyObject *set_loop_count(
     return NULL;
   }
 
-  object->gif_factory->set_loop_count(value);
+  object->kohn3d->set_loop_count(value);
 
   return Py_None;
 }
@@ -157,14 +157,14 @@ static PyObject *init_end(
   PyObject *self,
   PyObject *args)
 {
-  PyGifFactoryObject *object;
+  PyKohn3DObject *object;
 
   if (!PyArg_ParseTuple(args, "O", &object))
   {
     return NULL;
   }
 
-  object->gif_factory->init_end();
+  object->kohn3d->init_end();
 
   return Py_None;
 }
@@ -173,14 +173,14 @@ static PyObject *clear(
   PyObject *self,
   PyObject *args)
 {
-  PyGifFactoryObject *object;
+  PyKohn3DObject *object;
 
   if (!PyArg_ParseTuple(args, "O", &object))
   {
     return NULL;
   }
 
-  object->gif_factory->clear();
+  object->kohn3d->clear();
 
   return Py_None;
 }
@@ -189,18 +189,18 @@ static PyObject *draw_pixel(
   PyObject *self,
   PyObject *args)
 {
-  PyGifFactoryObject *object;
+  PyKohn3DObject *object;
   int x, y, color_index, z;
 
   if (PyArg_ParseTuple(args, "Oiii", &object, &x, &y, &color_index))
   {
-    object->gif_factory->draw_pixel(x, y, color_index);
+    object->kohn3d->draw_pixel(x, y, color_index);
     return Py_None;
   }
 
   if (PyArg_ParseTuple(args, "Oiiii", &object, &x, &y, &color_index, &z))
   {
-    object->gif_factory->draw_pixel(x, y, color_index, z);
+    object->kohn3d->draw_pixel(x, y, color_index, z);
     return Py_None;
   }
 
@@ -211,20 +211,20 @@ static PyObject *draw_line(
   PyObject *self,
   PyObject *args)
 {
-  PyGifFactoryObject *object;
+  PyKohn3DObject *object;
   int x0, y0, z0;
   int x1, y1, z1;
   int color_index;
 
   if (PyArg_ParseTuple(args, "Oiiii", &object, &x0, &y0, &x1, &y1, &color_index))
   {
-    object->gif_factory->draw_line(x0, y0, x1, y1, color_index);
+    object->kohn3d->draw_line(x0, y0, x1, y1, color_index);
     return Py_None;
   }
 
   if (PyArg_ParseTuple(args, "Oiiiiii", &object, &x0, &y0, &z0, &x1, &y1, &z1, &color_index))
   {
-    object->gif_factory->draw_line(x0, y0, z0, x1, y1, z1, color_index);
+    object->kohn3d->draw_line(x0, y0, z0, x1, y1, z1, color_index);
     return Py_None;
   }
 
@@ -235,14 +235,14 @@ static PyObject *draw_rect(
   PyObject *self,
   PyObject *args)
 {
-  PyGifFactoryObject *object;
+  PyKohn3DObject *object;
   int x0, y0;
   int x1, y1;
   int z, color_index;
 
   if (PyArg_ParseTuple(args, "Oiiiii", &object, &x0, &y0, &x1, &y1, &color_index))
   {
-    object->gif_factory->draw_rect(x0, y0, x1, y1, color_index);
+    object->kohn3d->draw_rect(x0, y0, x1, y1, color_index);
     return Py_None;
   }
 
@@ -258,13 +258,13 @@ static PyObject *draw_triangle(
   PyObject *self,
   PyObject *args)
 {
-  PyGifFactoryObject *object;
+  PyKohn3DObject *object;
   PyObject *triangle_list;
   PyObject *rotation_list;
   int x, y, z;
   int color_index;
-  GifFactory::Triangle triangle;
-  GifFactory::Rotation rotation;
+  Kohn3D::Triangle triangle;
+  Kohn3D::Rotation rotation;
 
   switch (PyTuple_Size(args))
   {
@@ -284,7 +284,7 @@ static PyObject *draw_triangle(
         triangle.y2 = (int)PyLong_AsLong(PyList_GetItem(triangle_list, 7));
         triangle.z2 = (int)PyLong_AsLong(PyList_GetItem(triangle_list, 8));
 
-        object->gif_factory->draw_triangle(triangle, x, y, color_index);
+        object->kohn3d->draw_triangle(triangle, x, y, color_index);
         return Py_None;
       }
 
@@ -306,7 +306,7 @@ static PyObject *draw_triangle(
         triangle.y2 = (int)PyLong_AsLong(PyList_GetItem(triangle_list, 7));
         triangle.z2 = (int)PyLong_AsLong(PyList_GetItem(triangle_list, 8));
 
-        object->gif_factory->draw_triangle(triangle, x, y, z, color_index);
+        object->kohn3d->draw_triangle(triangle, x, y, z, color_index);
         return Py_None;
       }
 
@@ -333,7 +333,7 @@ static PyObject *draw_triangle(
         rotation.ry = (int)PyFloat_AsDouble(PyList_GetItem(rotation_list, 1));
         rotation.rz = (int)PyFloat_AsDouble(PyList_GetItem(rotation_list, 2));
 
-        object->gif_factory->draw_triangle(triangle, rotation, x, y, z, color_index);
+        object->kohn3d->draw_triangle(triangle, rotation, x, y, z, color_index);
         return Py_None;
       }
 
@@ -348,19 +348,19 @@ static PyObject *write_frame(
   PyObject *self,
   PyObject *args)
 {
-  PyGifFactoryObject *object;
+  PyKohn3DObject *object;
 
   if (!PyArg_ParseTuple(args, "O", &object))
   {
     return NULL;
   }
 
-  object->gif_factory->write_frame();
+  object->kohn3d->write_frame();
 
   return Py_None;
 }
 
-static PyMethodDef GifFactoryMethods[] =
+static PyMethodDef Kohn3DMethods[] =
 {
   { "create", create, METH_VARARGS, "Start a new GIF."},
   { "finish", finish, METH_VARARGS, "Close the GIF."},
@@ -380,17 +380,17 @@ static PyMethodDef GifFactoryMethods[] =
   { NULL, NULL, 0, NULL }
 };
 
-static struct PyModuleDef gif_factory_module =
+static struct PyModuleDef kohn3d_module =
 {
   PyModuleDef_HEAD_INIT,
-  "gif_factory",
+  "kohn3d",
   "Python interface for GIF Factory.",
   -1,
-  GifFactoryMethods
+  Kohn3DMethods
 };
 
-PyMODINIT_FUNC PyInit_gif_factory(void)
+PyMODINIT_FUNC PyInit_kohn3d(void)
 {
-  return PyModule_Create(&gif_factory_module);
+  return PyModule_Create(&kohn3d_module);
 }
 

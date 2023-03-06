@@ -8,16 +8,16 @@ default:
 
 sample:
 	$(CXX) -o draw_bars samples/draw_bars.cxx \
-	  -L. -lgif_factory -Isrc \
+	  -L. -lkohn3d -Isrc \
 	  $(CFLAGS)
 	$(CXX) -o draw_cube samples/draw_cube.cxx \
-	  -L. -lgif_factory -Isrc \
+	  -L. -lkohn3d -Isrc \
 	  $(CFLAGS)
 	$(CXX) -o draw_lines samples/draw_lines.cxx \
-	  -L. -lgif_factory -Isrc \
+	  -L. -lkohn3d -Isrc \
 	  $(CFLAGS)
 	$(CXX) -o draw_triangles samples/draw_triangles.cxx \
-	  -L. -lgif_factory -Isrc \
+	  -L. -lkohn3d -Isrc \
 	  $(CFLAGS)
 
 clean:

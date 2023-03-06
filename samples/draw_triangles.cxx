@@ -5,18 +5,18 @@
 
 int main(int argc, char *argv[])
 {
-  Kohn3D gif_factory(320, 240);
+  Kohn3D kohn3d(320, 240);
 
-  gif_factory.create("test.gif");
-  gif_factory.clear();
-  gif_factory.add_color(0x000000);
-  gif_factory.add_color(0x0000ff);
-  gif_factory.add_color(0x00ff00);
-  gif_factory.add_color(0xff0000);
-  gif_factory.set_bg_color_index(0);
-  gif_factory.set_delay(10);
-  gif_factory.set_loop_count(Kohn3D::LOOP_INFINITE);
-  gif_factory.init_end();
+  kohn3d.create("test.gif");
+  kohn3d.clear();
+  kohn3d.add_color(0x000000);
+  kohn3d.add_color(0x0000ff);
+  kohn3d.add_color(0x00ff00);
+  kohn3d.add_color(0xff0000);
+  kohn3d.set_bg_color_index(0);
+  kohn3d.set_delay(10);
+  kohn3d.set_loop_count(Kohn3D::LOOP_INFINITE);
+  kohn3d.init_end();
 
   Kohn3D::Triangle triangle;
   triangle.x0 = 0;
@@ -48,14 +48,14 @@ int main(int argc, char *argv[])
     rotation_0.rz = r;
     rotation_1.ry = r;
 
-    gif_factory.clear();
-    gif_factory.draw_triangle(triangle, rotation_0, 160, 120, 0, 2);
-    gif_factory.draw_triangle(triangle, rotation_1, 190, 120, 0, 1);
-    gif_factory.draw_triangle(triangle_2, 60, 60, 3);
-    gif_factory.write_frame();
+    kohn3d.clear();
+    kohn3d.draw_triangle(triangle, rotation_0, 160, 120, 0, 2);
+    kohn3d.draw_triangle(triangle, rotation_1, 190, 120, 0, 1);
+    kohn3d.draw_triangle(triangle_2, 60, 60, 3);
+    kohn3d.write_frame();
   }
 
-  gif_factory.finish();
+  kohn3d.finish();
 
   return 0;
 }

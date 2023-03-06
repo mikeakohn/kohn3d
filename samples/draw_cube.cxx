@@ -5,21 +5,21 @@
 
 int main(int argc, char *argv[])
 {
-  Kohn3D gif_factory(320, 240);
+  Kohn3D kohn3d(320, 240);
 
-  gif_factory.create("test.gif");
-  gif_factory.clear();
-  gif_factory.add_color(0x000000);
-  gif_factory.add_color(0x0000ff);
-  gif_factory.add_color(0x00ff00);
-  gif_factory.add_color(0xff0000);
-  gif_factory.add_color(0xff00ff);
-  gif_factory.add_color(0x00ffff);
-  gif_factory.add_color(0xffff00);
-  gif_factory.set_bg_color_index(0);
-  gif_factory.set_delay(10);
-  gif_factory.set_loop_count(Kohn3D::LOOP_INFINITE);
-  gif_factory.init_end();
+  kohn3d.create("test.gif");
+  kohn3d.clear();
+  kohn3d.add_color(0x000000);
+  kohn3d.add_color(0x0000ff);
+  kohn3d.add_color(0x00ff00);
+  kohn3d.add_color(0xff0000);
+  kohn3d.add_color(0xff00ff);
+  kohn3d.add_color(0x00ffff);
+  kohn3d.add_color(0xffff00);
+  kohn3d.set_bg_color_index(0);
+  kohn3d.set_delay(10);
+  kohn3d.set_loop_count(Kohn3D::LOOP_INFINITE);
+  kohn3d.init_end();
 
   Kohn3D::Triangle triangles[12];
 
@@ -94,17 +94,17 @@ int main(int argc, char *argv[])
     rotation.ry = r + 2;
     rotation.rx = r + 3;
 
-    gif_factory.clear();
+    kohn3d.clear();
 
     for (int n = 0; n < 12; n++)
     {
-      gif_factory.draw_triangle(triangles[n], rotation, 160, 120, 0, (n / 2) + 1);
+      kohn3d.draw_triangle(triangles[n], rotation, 160, 120, 0, (n / 2) + 1);
     }
 
-    gif_factory.write_frame();
+    kohn3d.write_frame();
   }
 
-  gif_factory.finish();
+  kohn3d.finish();
 
   return 0;
 }
