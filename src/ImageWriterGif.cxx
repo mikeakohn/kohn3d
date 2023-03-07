@@ -1,6 +1,6 @@
 /*
 
-  GIF Factory - GIF drawing library.
+  Kohn3D - GIF drawing library.
 
   Copyright 2023 - Michael Kohn (mike@mikekohn.net)
   https://www.mikekohn.net/
@@ -13,60 +13,33 @@
 #include <stdlib.h>
 #include <string.h>
 
-#include "GifCompressor.h"
+#include "ImageWriterGif.h"
 
-GifCompressor::GifCompressor() :
-  fp { nullptr },
-  max_colors { 0 },
-  bg_color_index { 0 },
-  transparent_color_index { 0 },
-  do_transparency { false },
-  delay { 0 },
-  loop_count { -1 }
+ImageWriterGif::ImageWriterGif(int width, int height) :
+  ImageWriter(width, height)
 {
   memset(&gif_header, 0, sizeof(gif_header));
   memcpy(gif_header.version, "GIF89a", 6);
+
+  gif_header.width = width;
+  gif_header.height = height;
 }
 
-GifCompressor::~GifCompressor()
+ImageWriterGif::~ImageWriterGif()
 {
   finish();
 }
 
-int GifCompressor::create(const char *filename)
-{
-  fp = fopen(filename, "wb");
-  if (fp == nullptr) { return -1; }
-  return 0;
-}
-
-void GifCompressor::finish()
+void ImageWriterGif::finish()
 {
   if (fp != nullptr)
   {
     // End Marker.
     putc(';', fp);
-    fclose(fp);
   }
-
-  fp = nullptr;
 }
 
-void GifCompressor::set_palette(uint32_t *color_table, int length)
-{
-  max_colors = 0;
-
-  for (int i = 0; i < length; i++)
-  {
-    gif_palette[max_colors] = color_table[i];
-    max_colors++;
-  }
-
-  // FIXME: Why is this happening?
-  if (max_colors <= 2) { max_colors = 4; }
-}
-
-int GifCompressor::create_headers()
+int ImageWriterGif::create_headers()
 {
   uint8_t fields;
 
@@ -88,9 +61,9 @@ int GifCompressor::create_headers()
   // Global Color Map (palettes).
   for (int i = 0; i < max_colors; i++)
   {
-    putc((gif_palette[i] >> 16) & 0xff, fp);
-    putc((gif_palette[i] >> 8) & 0xff, fp);
-    putc(gif_palette[i] & 0xff, fp);
+    putc((palette[i] >> 16) & 0xff, fp);
+    putc((palette[i] >> 8) & 0xff, fp);
+    putc(palette[i] & 0xff, fp);
   }
 
   if (loop_count != -1)
@@ -110,7 +83,7 @@ int GifCompressor::create_headers()
   return 0;
 }
 
-int GifCompressor::compress(uint8_t *image, uint32_t *color_table)
+int ImageWriterGif::add_frame(uint8_t *image, uint32_t *color_table)
 {
   int ptr = 0, i;
 
@@ -168,6 +141,7 @@ int GifCompressor::compress(uint8_t *image, uint32_t *color_table)
   int length = gif_header.width * gif_header.height;
   uint8_t color = image[image_ptr++];
   int block_ptr;
+  uint8_t data[1024];
 
   block_ptr = ptr;
   data[ptr++] = 0;
@@ -280,7 +254,7 @@ int GifCompressor::compress(uint8_t *image, uint32_t *color_table)
   return 0;
 }
 
-int GifCompressor::compute_bits_per_pixel(int max_colors)
+int ImageWriterGif::compute_bits_per_pixel(int max_colors)
 {
   uint8_t counts[16] =
   {

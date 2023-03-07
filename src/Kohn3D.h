@@ -1,6 +1,6 @@
 /*
 
-  GIF Factory - GIF drawing library.
+  Kohn3D - GIF drawing library.
 
   Copyright 2023 - Michael Kohn (mike@mikekohn.net)
   https://www.mikekohn.net/
@@ -16,12 +16,20 @@
 #include <stdlib.h>
 #include <stdint.h>
 
-#include "GifCompressor.h"
+#include "ImageWriterBmp.h"
+#include "ImageWriterGif.h"
 
 class Kohn3D
 {
 public:
-  Kohn3D(int width, int height);
+  enum Format
+  {
+    FORMAT_GIF = 0,
+    FORMAT_BMP8,
+    FORMAT_BMP24
+  };
+
+  Kohn3D(int width, int height, Format format);
   ~Kohn3D();
 
   int create(const char *filename);
@@ -30,32 +38,34 @@ public:
   // The following methods must be called before init_end();
   int add_color(int value);
   void set_color(int index, int value);
-  void set_bg_color_index(uint8_t value) { gif.set_bg_color_index(value); }
+  void set_bg_color_index(uint8_t value) { image_writer->set_bg_color_index(value); }
 
   void set_transparent_color_index(uint8_t value)
   {
-    gif.set_transparent_color_index(value);
+    image_writer->set_transparent_color_index(value);
   }
 
   // Delay value is 100ths of a second.
-  void set_delay(int value) { gif.set_delay(value); }
+  void set_delay(int value) { image_writer->set_delay(value); }
 
   static const int LOOP_INFINITE = 0;
-  void set_loop_count(int value) { gif.set_loop_count(value); }
+  void set_loop_count(int value) { image_writer->set_loop_count(value); }
+  void set_32bit() { is_32bit = true; }
 
   void init_end();
   uint8_t *get_picture() { return picture; }
+  uint32_t *get_picture_32bit() { return picture_32bit; }
   void clear();
 
-  void draw_pixel(int x, int y, int color_index)
+  void draw_pixel(int x, int y, uint32_t color)
   {
     if (x < 0 || x >= width) { return; }
     if (y < 0 || y >= height) { return; }
 
-    picture[(y * width) + x] = color_index;
+    picture[(y * width) + x] = color;
   }
 
-  void draw_pixel(int x, int y, int color_index, int z)
+  void draw_pixel(int x, int y, uint32_t color, int z)
   {
     if (x < 0 || x >= width) { return; }
     if (y < 0 || y >= height) { return; }
@@ -64,14 +74,14 @@ public:
 
     if (z < z_buffer[pixel]) { return; }
 
-    picture[pixel] = color_index;
+    picture[pixel] = color;
     z_buffer[pixel] = z;
   }
 
-  void draw_line(int x0, int y0, int x1, int y1, int color_index);
-  void draw_line(int x0, int y0, int z0, int x1, int y1, int z1, int color_index);
-  void draw_rect(int x0, int y0, int x1, int y1, int color_index);
-  void draw_rect(int x0, int y0, int x1, int y1, int color_index, int z);
+  void draw_line(int x0, int y0, int x1, int y1, uint32_t color);
+  void draw_line(int x0, int y0, int z0, int x1, int y1, int z1, uint32_t color);
+  void draw_rect(int x0, int y0, int x1, int y1, uint32_t color);
+  void draw_rect(int x0, int y0, int x1, int y1, uint32_t color, int z);
 
   struct Triangle
   {
@@ -89,14 +99,14 @@ public:
   void load_triangle(Triangle &triangle, const int coords[]);
   void load_rotation(Rotation &rotation, const float values[]);
 
-  void draw_triangle(const Triangle &triangle, int x, int y, int color_index);
-  void draw_triangle(const Triangle &triangle, int x, int y, int z, int color_index);
+  void draw_triangle(const Triangle &triangle, int x, int y, uint32_t color);
+  void draw_triangle(const Triangle &triangle, int x, int y, int z, uint32_t color);
 
   void draw_triangle(
     const Triangle &triangle,
     const Rotation &rotation,
     int x, int y, int z,
-    int color_index);
+    uint32_t color);
 
   void write_frame();
 
@@ -113,12 +123,15 @@ private:
   void rotate(Triangle &triangle, const Rotation &rotation);
   void rotate(int &x, int &y, int &z, const Rotation &rotation);
 
+  bool is_32bit;
   int width, height;
   int color_count;
+  int format;
   uint8_t *picture;
+  uint32_t *picture_32bit;
   int16_t *z_buffer;
   uint32_t palette[256];
-  GifCompressor gif;
+  ImageWriter *image_writer;
 };
 
 #endif

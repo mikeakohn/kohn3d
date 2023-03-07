@@ -6,7 +6,9 @@ CFLAGS=-Wall -O3 -std=c++11 $(DEBUG) $(INCLUDES)
 VPATH=../src
 
 OBJECTS= \
-  GifCompressor.o \
+  ImageWriter.o \
+  ImageWriterBmp.o \
+  ImageWriterGif.o \
   Kohn3D.o
 
 default: $(OBJECTS)
@@ -15,5 +17,5 @@ default: $(OBJECTS)
 
 %.o: %.cxx %.h
 	$(CXX) -c $< -o $*.o \
-	  $(CFLAGS)
+	  $(CFLAGS) -fPIC
 

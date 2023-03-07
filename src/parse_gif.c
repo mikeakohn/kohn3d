@@ -1,6 +1,6 @@
 /*
 
-  GIF Factory - GIF drawing library.
+  Kohn3D - GIF drawing library.
 
   Copyright 2023 - Michael Kohn (mike@mikekohn.net)
   https://www.mikekohn.net/

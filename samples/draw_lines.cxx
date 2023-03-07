@@ -6,7 +6,7 @@
 
 int main(int argc, char *argv[])
 {
-  Kohn3D kohn3d(320, 240);
+  Kohn3D kohn3d(320, 240, Kohn3D::FORMAT_GIF);
 
   kohn3d.create("test.gif");
   kohn3d.add_color(0x000000);

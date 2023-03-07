@@ -1,6 +1,6 @@
 /*
 
-  GIF Factory - GIF drawing library.
+  Kohn3D - GIF drawing library.
 
   Copyright 2023 - Michael Kohn (mike@mikekohn.net)
   https://www.mikekohn.net/
@@ -17,15 +17,42 @@
 
 #include "Kohn3D.h"
 
-Kohn3D::Kohn3D(int width, int height) :
+Kohn3D::Kohn3D(int width, int height, Format format) :
+  is_32bit { false },
   width { width },
   height { height },
-  color_count { 0 }
+  color_count { 0 },
+  format { format },
+  picture_32bit { nullptr },
+  image_writer { nullptr }
 {
-  picture = (uint8_t *)malloc(width * height);
+  switch (format)
+  {
+    case FORMAT_GIF:
+      image_writer = new ImageWriterGif(width, height);
+      break;
+    case FORMAT_BMP8:
+      image_writer = new ImageWriterBmp(width, height, 8);
+      break;
+    case FORMAT_BMP24:
+      image_writer = new ImageWriterBmp(width, height, 24);
+      break;
+    default:
+      break;
+  }
+
   z_buffer = (int16_t *)malloc(width * height * sizeof(int16_t));
-  gif.set_width(width);
-  gif.set_height(height);
+
+  if (is_32bit)
+  {
+    picture = (uint8_t *)malloc(width * height * sizeof(uint32_t));
+    picture_32bit = (uint32_t *)picture;
+  }
+    else
+  {
+    picture = (uint8_t *)malloc(width * height);
+  }
+
   clear();
 }
 
@@ -38,12 +65,12 @@ Kohn3D::~Kohn3D()
 
 int Kohn3D::create(const char *filename)
 {
-  return gif.create(filename);
+  return image_writer->create(filename);
 }
 
 void Kohn3D::finish()
 {
-  gif.finish();
+  return image_writer->finish();
 }
 
 int Kohn3D::add_color(int value)
@@ -60,8 +87,8 @@ void Kohn3D::set_color(int index, int value)
 
 void Kohn3D::init_end()
 {
-  gif.set_palette(palette, color_count);
-  gif.create_headers();
+  image_writer->set_palette(palette, color_count);
+  image_writer->create_headers();
 }
 
 void Kohn3D::clear()
@@ -74,19 +101,19 @@ void Kohn3D::clear()
   }
 }
 
-void Kohn3D::draw_line(int x0, int y0, int x1, int y1, int color_index)
+void Kohn3D::draw_line(int x0, int y0, int x1, int y1, uint32_t color)
 {
   if (y0 == y1)
   {
     if (x1 < x0) { exchange(x0, x1); }
-    for (int x = x0; x <= x1; x++) { draw_pixel(x, y0, color_index); }
+    for (int x = x0; x <= x1; x++) { draw_pixel(x, y0, color); }
     return;
   }
 
   if (x0 == x1)
   {
     if (y1 < y0) { exchange(y0, y1); }
-    for (int y = y0; y <= y1; y++) { draw_pixel(x0, y, color_index); }
+    for (int y = y0; y <= y1; y++) { draw_pixel(x0, y, color); }
     return;
   }
 
@@ -106,7 +133,7 @@ void Kohn3D::draw_line(int x0, int y0, int x1, int y1, int color_index)
 
     for (int y = y0; y <= y1; y++)
     {
-      draw_pixel((int)x, y, color_index);
+      draw_pixel((int)x, y, color);
       x += dxdy;
     }
   }
@@ -123,7 +150,7 @@ void Kohn3D::draw_line(int x0, int y0, int x1, int y1, int color_index)
 
     for (int x = x0; x <= x1; x++)
     {
-      draw_pixel(x, (int)y, color_index);
+      draw_pixel(x, (int)y, color);
       y += dydx;
     }
   }
@@ -132,7 +159,7 @@ void Kohn3D::draw_line(int x0, int y0, int x1, int y1, int color_index)
 void Kohn3D::draw_line(
   int x0, int y0, int z0,
   int x1, int y1, int z1,
-  int color_index)
+  uint32_t color)
 {
   double dz, z;
 
@@ -149,7 +176,7 @@ void Kohn3D::draw_line(
 
     for (int x = x0; x <= x1; x++)
     {
-      draw_pixel(x, y0, color_index, z);
+      draw_pixel(x, y0, color, z);
       z += dz;
     }
 
@@ -169,7 +196,7 @@ void Kohn3D::draw_line(
 
     for (int y = y0; y <= y1; y++)
     {
-      draw_pixel(x0, y, color_index);
+      draw_pixel(x0, y, color);
       z += dz;
     }
 
@@ -196,7 +223,7 @@ void Kohn3D::draw_line(
 
     for (int y = y0; y <= y1; y++)
     {
-      draw_pixel((int)x, y, color_index, z);
+      draw_pixel((int)x, y, color, z);
       x += dxdy;
       z += dz;
     }
@@ -217,14 +244,14 @@ void Kohn3D::draw_line(
 
     for (int x = x0; x <= x1; x++)
     {
-      draw_pixel(x, (int)y, color_index, z);
+      draw_pixel(x, (int)y, color, z);
       y += dydx;
       z += dz;
     }
   }
 }
 
-void Kohn3D::draw_rect(int x0, int y0, int x1, int y1, int color_index)
+void Kohn3D::draw_rect(int x0, int y0, int x1, int y1, uint32_t color)
 {
   if (x0 > x1) { exchange(x0, x1); }
   if (y0 > y1) { exchange(y0, y1); }
@@ -233,7 +260,7 @@ void Kohn3D::draw_rect(int x0, int y0, int x1, int y1, int color_index)
   {
     for (int x = x0; x <= x1; x++)
     {
-      draw_pixel(x, y, color_index);
+      draw_pixel(x, y, color);
     }
   }
 }
@@ -241,7 +268,7 @@ void Kohn3D::draw_rect(int x0, int y0, int x1, int y1, int color_index)
 void Kohn3D::draw_rect(
   int x0, int y0,
   int x1, int y1,
-  int color_index,
+  uint32_t color,
   int z)
 {
   if (x0 > x1) { exchange(x0, x1); }
@@ -251,7 +278,7 @@ void Kohn3D::draw_rect(
   {
     for (int x = x0; x <= x1; x++)
     {
-      draw_pixel(x, y, color_index, z);
+      draw_pixel(x, y, color, z);
     }
   }
 }
@@ -280,7 +307,7 @@ void Kohn3D::draw_triangle(
   const Triangle &triangle,
   int x,
   int y,
-  int color_index)
+  uint32_t color)
 {
   Triangle v = triangle;
 
@@ -295,7 +322,7 @@ void Kohn3D::draw_triangle(
 
     for (int y0 = v.y0; y0 < v.y2; y0++)
     {
-      draw_line((int)x0 + x, y0 + y, (int)x1 + x, y0 + y, color_index);
+      draw_line((int)x0 + x, y0 + y, (int)x1 + x, y0 + y, color);
 
       x0 += dxdy_0;
       x1 += dxdy_1;
@@ -314,7 +341,7 @@ void Kohn3D::draw_triangle(
 
   for (int y0 = v.y0; y0 < v.y1; y0++)
   {
-    draw_line((int)x0 + x, y0 + y, (int)x1 + x, y0 + y, color_index);
+    draw_line((int)x0 + x, y0 + y, (int)x1 + x, y0 + y, color);
 
     x0 += dxdy_0;
     x1 += dxdy_1;
@@ -324,7 +351,7 @@ void Kohn3D::draw_triangle(
 
   for (int y0 = v.y1; y0 < v.y2; y0++)
   {
-    draw_line((int)x0 + x, y0 + y, (int)x1 + x, y0 + y, color_index);
+    draw_line((int)x0 + x, y0 + y, (int)x1 + x, y0 + y, color);
 
     x0 += dxdy_0;
     x1 += dxdy_1;
@@ -336,7 +363,7 @@ void Kohn3D::draw_triangle(
   int x,
   int y,
   int z,
-  int color_index)
+  uint32_t color)
 {
   Triangle v = triangle;
 
@@ -355,7 +382,7 @@ void Kohn3D::draw_triangle(
 
     for (int y0 = v.y0; y0 < v.y2; y0++)
     {
-      draw_line((int)x0 + x, y0 + y, (int)z0 + z, (int)x1 + x, y0 + y, (int)z1 + z, color_index);
+      draw_line((int)x0 + x, y0 + y, (int)z0 + z, (int)x1 + x, y0 + y, (int)z1 + z, color);
 
       x0 += dxdy_0;
       x1 += dxdy_1;
@@ -381,7 +408,7 @@ void Kohn3D::draw_triangle(
 
   for (int y0 = v.y0; y0 < v.y1; y0++)
   {
-    draw_line((int)x0 + x, y0 + y, (int)z0 + z, (int)x1 + x, y0 + y, (int)z1 + z, color_index);
+    draw_line((int)x0 + x, y0 + y, (int)z0 + z, (int)x1 + x, y0 + y, (int)z1 + z, color);
 
     x0 += dxdy_0;
     x1 += dxdy_1;
@@ -394,7 +421,7 @@ void Kohn3D::draw_triangle(
 
   for (int y0 = v.y1; y0 < v.y2; y0++)
   {
-    draw_line((int)x0 + x, y0 + y, (int)z0 + z, (int)x1 + x, y0 + y, (int)z1 + z, color_index);
+    draw_line((int)x0 + x, y0 + y, (int)z0 + z, (int)x1 + x, y0 + y, (int)z1 + z, color);
 
     x0 += dxdy_0;
     x1 += dxdy_1;
@@ -409,17 +436,17 @@ void Kohn3D::draw_triangle(
   int x,
   int y,
   int z,
-  int color_index)
+  uint32_t color)
 {
   Triangle v = triangle;
 
   rotate(v, rotation);
-  draw_triangle(v, x, y, z, color_index);
+  draw_triangle(v, x, y, z, color);
 }
 
 void Kohn3D::write_frame()
 {
-  gif.compress(picture, palette);
+  image_writer->add_frame(picture, palette);
 }
 
 void Kohn3D::sort_vertexes(Triangle &triangle)
