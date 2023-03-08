@@ -52,9 +52,18 @@ protected:
     putc((value >> 8) & 0xff, fp);
   }
 
+  void write_uint32(int value)
+  {
+    putc(value & 0xff, fp);
+    putc((value >> 8) & 0xff, fp);
+    putc((value >> 16) & 0xff, fp);
+    putc((value >> 24) & 0xff, fp);
+  }
+
   FILE *fp;
 
   uint32_t palette[256];
+  int width, height;
   int max_colors;
   uint8_t bg_color_index;
   uint8_t transparent_color_index;

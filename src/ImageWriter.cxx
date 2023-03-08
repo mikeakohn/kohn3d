@@ -17,6 +17,8 @@
 
 ImageWriter::ImageWriter(int width, int height) :
   fp { nullptr },
+  width { width },
+  height { height },
   max_colors { 0 },
   bg_color_index { 0 },
   transparent_color_index { 0 },
@@ -24,6 +26,7 @@ ImageWriter::ImageWriter(int width, int height) :
   delay { 0 },
   loop_count { -1 }
 {
+  memset(palette, 0, sizeof(palette));
 }
 
 ImageWriter::~ImageWriter()

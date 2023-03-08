@@ -85,7 +85,7 @@ private:
     int bitptr;
   };
 
-  inline int compute_bits_per_pixel(int max_colors);
+  int compute_bits_per_pixel(int max_colors);
 
   GifHeader gif_header;
 };

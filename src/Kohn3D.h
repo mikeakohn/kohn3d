@@ -62,7 +62,16 @@ public:
     if (x < 0 || x >= width) { return; }
     if (y < 0 || y >= height) { return; }
 
-    picture[(y * width) + x] = color;
+    int pixel = (y * width) + x;
+
+    if (is_32bit)
+    {
+      picture_32bit[pixel] = color;
+    }
+      else
+    {
+      picture[pixel] = color;
+    }
   }
 
   void draw_pixel(int x, int y, uint32_t color, int z)
@@ -74,7 +83,15 @@ public:
 
     if (z < z_buffer[pixel]) { return; }
 
-    picture[pixel] = color;
+    if (is_32bit)
+    {
+      picture_32bit[pixel] = color;
+    }
+      else
+    {
+      picture[pixel] = color;
+    }
+
     z_buffer[pixel] = z;
   }
 

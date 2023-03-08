@@ -27,6 +27,9 @@ public:
   virtual int add_frame(uint8_t *image, uint32_t *color_table);
 
 private:
+  int depth;
+  bool was_image_written;
+  long offset_to_image;
 
 };
 

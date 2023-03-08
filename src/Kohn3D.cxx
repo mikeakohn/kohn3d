@@ -36,6 +36,7 @@ Kohn3D::Kohn3D(int width, int height, Format format) :
       break;
     case FORMAT_BMP24:
       image_writer = new ImageWriterBmp(width, height, 24);
+      is_32bit = true;
       break;
     default:
       break;
