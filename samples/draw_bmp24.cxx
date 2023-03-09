@@ -36,8 +36,7 @@ int main(int argc, char *argv[])
   Kohn3D::Rotation rotation_0;
   Kohn3D::Rotation rotation_1;
 
-  Kohn3D::VertexColors colors;
-  uint32_t *colors = { 0xff00ff, 0xff0000, 0x0000ff };
+  uint32_t colors[] = { 0xff00ff, 0xff0000, 0x0000ff };
 
   float r = 2.0;
 
