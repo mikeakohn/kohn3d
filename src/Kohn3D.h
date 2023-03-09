@@ -97,6 +97,8 @@ public:
 
   void draw_line(int x0, int y0, int x1, int y1, uint32_t color);
   void draw_line(int x0, int y0, int z0, int x1, int y1, int z1, uint32_t color);
+  void draw_line(int x0, int y0, int z0, int x1, int y1, int z1, int r0, int g0, int b0, int r1, int b1, int g1);
+
   void draw_rect(int x0, int y0, int x1, int y1, uint32_t color);
   void draw_rect(int x0, int y0, int x1, int y1, uint32_t color, int z);
 
@@ -118,6 +120,7 @@ public:
 
   void draw_triangle(const Triangle &triangle, int x, int y, uint32_t color);
   void draw_triangle(const Triangle &triangle, int x, int y, int z, uint32_t color);
+  void draw_triangle(const Triangle &triangle, int x, int y, int z, uint32_t *colors);
 
   void draw_triangle(
     const Triangle &triangle,
@@ -125,18 +128,25 @@ public:
     int x, int y, int z,
     uint32_t color);
 
+  void draw_triangle(
+    const Triangle &triangle,
+    const Rotation &rotation,
+    int x, int y, int z,
+    uint32_t *colors);
+
   void write_frame();
 
 private:
-  void exchange(int &a, int &b)
+  template<typename T> void exchange(T &a, T &b)
   {
-    int temp;
+    T temp;
     temp = a;
     a = b;
     b = temp;
   }
 
   void sort_vertexes(Triangle &triangle);
+  void sort_vertexes(Triangle &triangle, uint32_t *colors);
   void rotate(Triangle &triangle, const Rotation &rotation);
   void rotate(int &x, int &y, int &z, const Rotation &rotation);
 

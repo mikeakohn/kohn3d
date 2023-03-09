@@ -252,6 +252,165 @@ void Kohn3D::draw_line(
   }
 }
 
+void Kohn3D::draw_line(
+  int x0, int y0, int z0,
+  int x1, int y1, int z1,
+  int r0, int g0, int b0,
+  int r1, int g1, int b1)
+{
+  uint32_t color;
+  double dz, z;
+  double dr, r;
+  double dg, g;
+  double db, b;
+
+  if (y0 == y1)
+  {
+    if (x1 < x0)
+    {
+      exchange(x0, x1);
+      exchange(z0, z1);
+      exchange(r0, r1);
+      exchange(g0, g1);
+      exchange(b0, b1);
+    }
+
+    double dx = (double)(x1 - x0);
+
+    z = z0;
+    r = r0;
+    g = g0;
+    b = b0;
+    dz = (double)(z1 - z0) / dx;
+    dr = (double)(r1 - r0) / dx;
+    dg = (double)(g1 - g0) / dx;
+    db = (double)(b1 - b0) / dx;
+
+    for (int x = x0; x <= x1; x++)
+    {
+      color = ((int)r << 16) | ((int)g << 8) | (int)b;
+      draw_pixel(x, y0, color, z);
+      z += dz;
+      r += dr;
+      g += dg;
+      b += db;
+    }
+
+    return;
+  }
+
+  if (x0 == x1)
+  {
+    if (x1 < x0)
+    {
+      exchange(y0, y1);
+      exchange(z0, z1);
+      exchange(r0, r1);
+      exchange(g0, g1);
+      exchange(b0, b1);
+    }
+
+    double dy = (double)(y1 - y0);
+
+    z = z0;
+    r = r0;
+    g = g0;
+    b = b0;
+    dz = (double)(z1 - z0) / dy;
+    dr = (double)(r1 - r0) / dy;
+    dg = (double)(g1 - g0) / dy;
+    db = (double)(b1 - b0) / dy;
+
+    for (int y = y0; y <= y1; y++)
+    {
+      color = ((int)r << 16) | ((int)g << 8) | (int)b;
+      draw_pixel(x0, y, color);
+      z += dz;
+      r += dr;
+      g += dg;
+      b += db;
+    }
+
+    return;
+  }
+
+  int dx = (x0 - x1);
+  int dy = (y0 - y1);
+
+  if (abs(dx) < abs(dy))
+  {
+    if (y0 > y1)
+    {
+      exchange(x0, x1);
+      exchange(y0, y1);
+      exchange(z0, z1);
+      exchange(r0, r1);
+      exchange(g0, g1);
+      exchange(b0, b1);
+    }
+
+    double dy = (double)(y0 - y1);
+    double dxdy = (double)(x0 - x1) / dy;
+    double x = (double)x0;
+
+    z = z0;
+    r = r0;
+    g = g0;
+    b = b0;
+    dz = (double)(z0 - z1) / dy;
+    dr = (double)(r0 - r1) / dy;
+    dg = (double)(g0 - g1) / dy;
+    db = (double)(b0 - b1) / dy;
+
+    for (int y = y0; y <= y1; y++)
+    {
+      color = ((int)r << 16) | ((int)g << 8) | (int)b;
+      draw_pixel((int)x, y, color, z);
+      x += dxdy;
+      z += dz;
+      r += dr;
+      g += dg;
+      b += db;
+    }
+  }
+    else
+  {
+    if (x0 > x1)
+    {
+      exchange(x0, x1);
+      exchange(y0, y1);
+      exchange(z0, z1);
+      exchange(r0, r1);
+      exchange(g0, g1);
+      exchange(b0, b1);
+    }
+
+    double dydx = (double)(y0 - y1) / (double)(x0 - x1);
+    double y = (double)y0;
+
+    z = z0;
+    r = r0;
+    g = g0;
+    b = b0;
+    double dy = (double)(y0 - y1);
+    dz = (double)(z0 - z1) / dy;
+    dr = (double)(r0 - r1) / dy;
+    dg = (double)(g0 - g1) / dy;
+    db = (double)(b0 - b1) / dy;
+
+    for (int x = x0; x <= x1; x++)
+    {
+      color = ((int)r << 16) | ((int)g << 8) | (int)b;
+      draw_pixel(x, (int)y, color, z);
+      y += dydx;
+      z += dz;
+      r += dr;
+      g += dg;
+      b += db;
+    }
+  }
+}
+
 void Kohn3D::draw_rect(int x0, int y0, int x1, int y1, uint32_t color)
 {
   if (x0 > x1) { exchange(x0, x1); }
@@ -433,6 +592,82 @@ void Kohn3D::draw_triangle(
 
 void Kohn3D::draw_triangle(
   const Triangle &triangle,
+  int x,
+  int y,
+  int z,
+  uint32_t *colors)
+{
+  Triangle v = triangle;
+
+  sort_vertexes(v, colors);
+
+  uint32_t color = colors[0];
+
+  if (v.y0 == v.y1)
+  {
+    double dxdy_0 = (double)(v.x2 - v.x0) / (double)(v.y2 - v.y0);
+    double dxdy_1 = (double)(v.x2 - v.x1) / (double)(v.y2 - v.y1);
+    double dzdy_0 = (double)(v.z2 - v.z0) / (double)(v.y2 - v.y0);
+    double dzdy_1 = (double)(v.z2 - v.z1) / (double)(v.y2 - v.y1);
+    double x0 = v.x0;
+    double x1 = v.x1;
+    double z0 = v.z0;
+    double z1 = v.z1;
+
+    for (int y0 = v.y0; y0 < v.y2; y0++)
+    {
+      draw_line((int)x0 + x, y0 + y, (int)z0 + z, (int)x1 + x, y0 + y, (int)z1 + z, color);
+
+      x0 += dxdy_0;
+      x1 += dxdy_1;
+      z0 += dzdy_0;
+      z1 += dzdy_1;
+    }
+
+    return;
+  }
+
+  color = colors[0];
+
+  double dxdy_0 = (double)(v.x2 - v.x0) / (double)(v.y2 - v.y0);
+  double dzdy_0 = (double)(v.z2 - v.z0) / (double)(v.y2 - v.y0);
+  double x0, x1;
+  double z0, z1;
+  double dxdy_1;
+  double dzdy_1;
+
+  dxdy_1 = (double)(v.x1 - v.x0) / (double)(v.y1 - v.y0);
+  dzdy_1 = (double)(v.z1 - v.z0) / (double)(v.y1 - v.y0);
+
+  x0 = x1 = v.x0;
+  z0 = z1 = v.z0;
+
+  for (int y0 = v.y0; y0 < v.y1; y0++)
+  {
+    draw_line((int)x0 + x, y0 + y, (int)z0 + z, (int)x1 + x, y0 + y, (int)z1 + z, color);
+
+    x0 += dxdy_0;
+    x1 += dxdy_1;
+    z0 += dzdy_0;
+    z1 += dzdy_1;
+  }
+
+  dxdy_1 = (double)(v.x2 - v.x1) / (double)(v.y2 - v.y1);
+  dzdy_1 = (double)(v.z2 - v.z1) / (double)(v.y2 - v.y1);
+
+  for (int y0 = v.y1; y0 < v.y2; y0++)
+  {
+    draw_line((int)x0 + x, y0 + y, (int)z0 + z, (int)x1 + x, y0 + y, (int)z1 + z, color);
+
+    x0 += dxdy_0;
+    x1 += dxdy_1;
+    z0 += dzdy_0;
+    z1 += dzdy_1;
+  }
+}
+
+void Kohn3D::draw_triangle(
+  const Triangle &triangle,
   const Rotation &rotation,
   int x,
   int y,
@@ -443,6 +678,20 @@ void Kohn3D::draw_triangle(
 
   rotate(v, rotation);
   draw_triangle(v, x, y, z, color);
+}
+
+void Kohn3D::draw_triangle(
+  const Triangle &triangle,
+  const Rotation &rotation,
+  int x,
+  int y,
+  int z,
+  uint32_t *colors)
+{
+  Triangle v = triangle;
+
+  rotate(v, rotation);
+  draw_triangle(v, x, y, z, colors);
 }
 
 void Kohn3D::write_frame()
@@ -472,6 +721,34 @@ void Kohn3D::sort_vertexes(Triangle &triangle)
     exchange(triangle.x0, triangle.x1);
     exchange(triangle.y0, triangle.y1);
     exchange(triangle.z0, triangle.z1);
+  }
+}
+
+void Kohn3D::sort_vertexes(Triangle &triangle, uint32_t *colors)
+{
+  // Sort vertexes to y0 is top, y1 is middle, and y2 is bottom.
+  if (triangle.y0 > triangle.y1)
+  {
+    exchange(triangle.x0, triangle.x1);
+    exchange(triangle.y0, triangle.y1);
+    exchange(triangle.z0, triangle.z1);
+    exchange(colors[0], colors[1]);
+  }
+
+  if (triangle.y1 > triangle.y2)
+  {
+    exchange(triangle.x1, triangle.x2);
+    exchange(triangle.y1, triangle.y2);
+    exchange(triangle.z1, triangle.z2);
+    exchange(colors[1], colors[2]);
+  }
+
+  if (triangle.y0 > triangle.y1)
+  {
+    exchange(triangle.x0, triangle.x1);
+    exchange(triangle.y0, triangle.y1);
+    exchange(triangle.z0, triangle.z1);
+    exchange(colors[0], colors[1]);
   }
 }
 

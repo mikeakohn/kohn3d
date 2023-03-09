@@ -36,15 +36,18 @@ int main(int argc, char *argv[])
   Kohn3D::Rotation rotation_0;
   Kohn3D::Rotation rotation_1;
 
+  Kohn3D::VertexColors colors;
+  uint32_t *colors = { 0xff00ff, 0xff0000, 0x0000ff };
+
   float r = 2.0;
 
   rotation_0.rz = r;
   rotation_1.ry = r;
 
   kohn3d.clear();
-  kohn3d.draw_triangle(triangle, rotation_0, 160, 120, 0, 0xff0000);
+  kohn3d.draw_triangle(triangle, rotation_0, 160, 120, 0, colors);
   kohn3d.draw_triangle(triangle, rotation_1, 190, 120, 0, 0x00ff00);
-  kohn3d.draw_triangle(triangle_2, 60, 60, 0x0000ff);
+  kohn3d.draw_triangle(triangle_2, 60, 60, 0, colors);
   kohn3d.write_frame();
 
   kohn3d.finish();
