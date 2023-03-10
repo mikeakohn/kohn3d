@@ -49,17 +49,12 @@ Kohn3D::Kohn3D(int width, int height, Format format) :
       break;
   }
 
+  picture = (uint8_t *)malloc(width * height * sizeof(uint32_t));
   z_buffer = (int16_t *)malloc(width * height * sizeof(int16_t));
 
-  if (is_32bit)
-  {
-    picture = (uint8_t *)malloc(width * height * sizeof(uint32_t));
-    picture_32bit = (uint32_t *)picture;
-  }
-    else
-  {
-    picture = (uint8_t *)malloc(width * height);
-  }
+  if (is_32bit) { picture_32bit = (uint32_t *)picture; }
+
+  memset(picture, 0, width * height * sizeof(uint32_t));
 
   clear();
 }
@@ -101,7 +96,7 @@ void Kohn3D::init_end()
 
 void Kohn3D::clear()
 {
-  memset(picture, 0, width * height);
+  memset(picture, 0, is_32bit ? width * height * sizeof(uint32_t) : width * height);
 
   for (int i = 0; i < width * height; i++)
   {

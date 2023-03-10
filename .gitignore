@@ -2,7 +2,7 @@
 *.o
 *.gif
 *.bmp
-*.vai
+*.avi
 *.swp
 draw_bars
 draw_avi8

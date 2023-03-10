@@ -35,26 +35,19 @@ void ImageWriterAvi::finish()
   long marker = ftell(fp);
 
   fseek(fp, list_marker, SEEK_SET);
-  write_uint32((int)marker);
+  write_uint32(marker - list_marker - 4);
 
   fseek(fp, avi_header_marker, SEEK_SET);
   write_avi_header();
+
+  fseek(fp, 4, SEEK_SET);
+  write_uint32((int)marker);
 
   fseek(fp, marker, SEEK_SET);
 }
 
 int ImageWriterAvi::create_headers()
 {
-  fwrite("RIFF", 1, 4, fp);
-  write_uint32(0);
-  fwrite("AVI ", 1, 4, fp);
-
-  fwrite("LIST", 1, 4, fp);
-  list_marker = ftell(fp);
-  write_uint32(0);
-  fwrite("movi", 1, 4, fp);
-
-  avi_header_marker = ftell(fp);
   avi_header.time_delay = 1000000 / fps;
   avi_header.data_rate = width * height * 3;
   avi_header.reserved = 0;
@@ -70,8 +63,6 @@ int ImageWriterAvi::create_headers()
   avi_header.starting_time = 0;
   avi_header.data_length = 0;
 
-  write_avi_header();
-
   memcpy(stream_header.data_type, "vids", 4);
   //stream_header.codec[4];
   stream_header.flags = 0;
@@ -85,8 +76,6 @@ int ImageWriterAvi::create_headers()
   stream_header.quality = 0;
   stream_header.sample_size = 0;
 
-  write_stream_header();
-
   stream_format.header_size = 40;
   stream_format.width = width;
   stream_format.height = height;
@@ -96,10 +85,20 @@ int ImageWriterAvi::create_headers()
   stream_format.image_size = depth == 8 ? width * height : width * height * 3;
   stream_format.x_pels_per_meter = 0;
   stream_format.y_pels_per_meter = 0;
-  stream_format.colors_used = max_colors;
-  stream_format.colors_important = max_colors;
+  stream_format.colors_used = depth == 8 ? max_colors : 0;
+  stream_format.colors_important = depth == 8 ? max_colors : 0;
 
-  write_stream_format();
+  fwrite("RIFF", 1, 4, fp);
+  write_uint32(0);
+  fwrite("AVI ", 1, 4, fp);
+
+  write_avi_header_chunk();
+
+  fwrite("LIST", 1, 4, fp);
+  list_marker = ftell(fp);
+  write_uint32(0);
+  fwrite("movi", 1, 4, fp);
+
 
   return 0;
 }
@@ -151,9 +150,44 @@ int ImageWriterAvi::add_frame(uint8_t *image, uint32_t *color_table)
   return 0;
 }
 
+void ImageWriterAvi::write_avi_header_chunk()
+{
+  long marker, here;
+  long sub_marker;
+
+  fwrite("LIST", 1, 4, fp);
+  marker = ftell(fp);
+  write_uint32(0);
+  fwrite("hdrl", 1, 4, fp);
+
+  write_avi_header();
+
+  fwrite("LIST", 1, 4, fp);
+  sub_marker = ftell(fp);
+  write_uint32(0);
+  fwrite("strl", 1, 4, fp);
+
+  write_stream_header();
+  write_stream_format();
+
+  here = ftell(fp);
+  fseek(fp, sub_marker, SEEK_SET);
+  write_uint32(here - sub_marker - 4);
+  fseek(fp, here, SEEK_SET);
+
+  here = ftell(fp);
+  fseek(fp, marker, SEEK_SET);
+  write_uint32(here - marker - 4);
+  fseek(fp, here, SEEK_SET);
+
+  write_junk_chunk();
+}
+
 void ImageWriterAvi::write_avi_header()
 {
-  int marker, t;
+  int marker, here;
+
+  avi_header_marker = ftell(fp);
 
   fwrite("avih", 1, 4, fp);
   marker = ftell(fp);
@@ -174,10 +208,10 @@ void ImageWriterAvi::write_avi_header()
   write_uint32(avi_header.starting_time);
   write_uint32(avi_header.data_length);
 
-  t = ftell(fp);
+  here = ftell(fp);
   fseek(fp, marker, SEEK_SET);
-  write_uint32(t - marker - 4);
-  fseek(fp, t, SEEK_SET);
+  write_uint32(here - marker - 4);
+  fseek(fp, here, SEEK_SET);
 }
 
 void ImageWriterAvi::write_stream_header()
@@ -240,10 +274,10 @@ void ImageWriterAvi::write_stream_format()
     }
   }
 
-  t = ftell(fp);
+  long here = ftell(fp);
   fseek(fp, marker, SEEK_SET);
-  write_uint32(t - marker - 4);
-  fseek(fp, t, SEEK_SET);
+  write_uint32(here - marker - 4);
+  fseek(fp, here, SEEK_SET);
 }
 
 void ImageWriterAvi::write_junk_chunk()

@@ -28,6 +28,7 @@ public:
   virtual int add_frame(uint8_t *image, uint32_t *color_table);
 
 private:
+  void write_avi_header_chunk();
   void write_avi_header();
   void write_stream_header();
   void write_stream_format();
