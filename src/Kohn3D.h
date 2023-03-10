@@ -18,6 +18,7 @@
 
 #include "ImageWriterBmp.h"
 #include "ImageWriterGif.h"
+#include "ImageWriterAvi.h"
 
 class Kohn3D
 {
@@ -25,6 +26,8 @@ public:
   enum Format
   {
     FORMAT_GIF = 0,
+    FORMAT_AVI8,
+    FORMAT_AVI24,
     FORMAT_BMP8,
     FORMAT_BMP24
   };
@@ -47,6 +50,7 @@ public:
 
   // Delay value is 100ths of a second.
   void set_delay(int value) { image_writer->set_delay(value); }
+  void set_fps(int value) { image_writer->set_fps(value); }
 
   static const int LOOP_INFINITE = 0;
   void set_loop_count(int value) { image_writer->set_loop_count(value); }

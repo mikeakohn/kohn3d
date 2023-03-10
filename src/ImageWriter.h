@@ -34,6 +34,7 @@ public:
   }
 
   void set_delay(int value) { delay = value; }
+  void set_fps(int value) { fps = value; }
   void set_loop_count(int value) { loop_count = value; }
 
   virtual int create_headers() = 0;
@@ -69,6 +70,7 @@ protected:
   uint8_t transparent_color_index;
   bool do_transparency;
   int delay;
+  int fps;
   int loop_count;
 
 private:

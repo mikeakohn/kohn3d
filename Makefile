@@ -19,6 +19,12 @@ sample:
 	$(CXX) -o draw_triangles samples/draw_triangles.cxx \
 	  -L. -lkohn3d -Isrc \
 	  $(CFLAGS)
+	$(CXX) -o draw_avi8 samples/draw_avi8.cxx \
+	  -L. -lkohn3d -Isrc \
+	  $(CFLAGS)
+	$(CXX) -o draw_avi24 samples/draw_avi24.cxx \
+	  -L. -lkohn3d -Isrc \
+	  $(CFLAGS)
 	$(CXX) -o draw_bmp8 samples/draw_bmp8.cxx \
 	  -L. -lkohn3d -Isrc \
 	  $(CFLAGS)
@@ -32,5 +38,6 @@ clean:
 	@rm -f parse_bmp parse_gif
 	@rm -f draw_bars draw_cube draw_lines draw_triangles
 	@rm -f draw_bmp8 draw_bmp24
+	@rm -f draw_avi8 draw_avi24
 	@echo "Clean!"
 

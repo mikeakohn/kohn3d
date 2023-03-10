@@ -44,6 +44,9 @@ All of the available functions are:
     // Delay value is 100ths of a second.
     void set_delay(int value);
 
+    // Set frame rate (for AVI file).
+    void set_fps(int value);
+
     static const int LOOP_INFINITE = 0;
     void set_loop_count(int value);
 

@@ -7,6 +7,7 @@ VPATH=../src
 
 OBJECTS= \
   ImageWriter.o \
+  ImageWriterAvi.o \
   ImageWriterBmp.o \
   ImageWriterGif.o \
   Kohn3D.o

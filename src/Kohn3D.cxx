@@ -31,6 +31,13 @@ Kohn3D::Kohn3D(int width, int height, Format format) :
     case FORMAT_GIF:
       image_writer = new ImageWriterGif(width, height);
       break;
+    case FORMAT_AVI8:
+      image_writer = new ImageWriterAvi(width, height, 8);
+      break;
+    case FORMAT_AVI24:
+      image_writer = new ImageWriterAvi(width, height, 24);
+      is_32bit = true;
+      break;
     case FORMAT_BMP8:
       image_writer = new ImageWriterBmp(width, height, 8);
       break;
