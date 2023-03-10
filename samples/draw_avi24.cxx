@@ -79,6 +79,16 @@ int main(int argc, char *argv[])
 
   Kohn3D::Rotation rotation;
 
+  uint32_t colors[] =
+  {
+    0x0000ff,
+    0x00ff00,
+    0xff0000,
+    0xff00ff,
+    0x00ffff,
+    0xffff00,
+  };
+
   for (float r = 0; r < 6.18; r += 6.18 / 30)
   {
     rotation.rz = r;
@@ -89,7 +99,7 @@ int main(int argc, char *argv[])
 
     for (int n = 0; n < 12; n++)
     {
-      kohn3d.draw_triangle(triangles[n], rotation, 160, 120, 0, (n / 2) + 1);
+      kohn3d.draw_triangle(triangles[n], rotation, 160, 120, 0, colors[n / 2]);
     }
 
     kohn3d.write_frame();

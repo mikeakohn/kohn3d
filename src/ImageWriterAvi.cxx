@@ -34,14 +34,18 @@ void ImageWriterAvi::finish()
 {
   long marker = ftell(fp);
 
-  fseek(fp, list_marker, SEEK_SET);
-  write_uint32(marker - list_marker - 4);
+  fseek(fp, movi_marker, SEEK_SET);
+  write_uint32(marker - movi_marker - 4);
 
   fseek(fp, avi_header_marker, SEEK_SET);
   write_avi_header();
 
+  fseek(fp, marker, SEEK_SET);
+  write_index();
+
+  marker = ftell(fp);
   fseek(fp, 4, SEEK_SET);
-  write_uint32((int)marker);
+  write_uint32(marker - 8);
 
   fseek(fp, marker, SEEK_SET);
 }
@@ -95,28 +99,40 @@ int ImageWriterAvi::create_headers()
   write_avi_header_chunk();
 
   fwrite("LIST", 1, 4, fp);
-  list_marker = ftell(fp);
+  movi_marker = ftell(fp);
   write_uint32(0);
   fwrite("movi", 1, 4, fp);
-
 
   return 0;
 }
 
 int ImageWriterAvi::add_frame(uint8_t *image, uint32_t *color_table)
 {
-  int padding;
   int x, y, n;
 
   avi_header.number_of_frames++;
   avi_header.data_length++;
 
-  offsets.push_back((int)ftell(fp));
+  //offsets.push_back((int)ftell(fp));
+
+  int frame_size, padding;
 
   if (depth == 8)
   {
     padding = (4 - (width % 4)) & 0x3;
+    frame_size = (width + padding) * height;
+  }
+    else
+  {
+    padding = (4 - ((width * 3) % 4)) & 0x3;
+    frame_size = ((width * 3) + padding) * height;
+  }
 
+  fwrite("00db", 1, 4, fp);
+  write_uint32(frame_size);
+
+  if (depth == 8)
+  {
     for (y = height - 1; y >= 0; y--)
     {
       for (x = 0; x < width; x++)
@@ -130,8 +146,6 @@ int ImageWriterAvi::add_frame(uint8_t *image, uint32_t *color_table)
     else
   {
     uint32_t *image32 = (uint32_t *)image;
-
-    padding = (4 - ((width * 3) % 4)) & 0x3;
 
     for (y = height - 1; y >= 0; y--)
     {
@@ -309,18 +323,49 @@ void ImageWriterAvi::write_junk_chunk()
 void ImageWriterAvi::write_index()
 {
   long marker;
-  const int frame_size = depth == 8 ? width * height : width * height * 3;
+  int frame_size, padding;
   
   fwrite("idx1", 1, 4, fp);
   marker = ftell(fp);
   write_uint32(0);
 
+  if (depth == 8)
+  {
+    padding = (4 - (width % 4)) & 0x3;
+    frame_size = (width + padding) * height;
+  }
+    else
+  {
+    padding = (4 - ((width * 3) % 4)) & 0x3;
+    frame_size = ((width * 3) + padding) * height;
+  }
+
+#if 0
   for (auto offset : offsets)
   {
-    fwrite("00dc", 1, 4, fp);
+    fwrite("00db", 1, 4, fp);
     write_uint32(0x10);
     write_uint32(offset);
     write_uint32(frame_size);
+  }
+#endif
+
+  // Chunk Id:
+  //  00db = stream 0, data uncompressed
+  //  00dc = stream 0, data compressed
+  //  00pc = stream 0, palette change
+  //  00wb = stream 0, audio data
+
+  uint32_t offset = 4;
+
+  for (int n = 0; n < avi_header.number_of_frames; n++)
+  {
+    fwrite("00db", 1, 4, fp);
+    write_uint32(0x10);
+    write_uint32(offset);
+    write_uint32(frame_size);
+
+    offset += frame_size + 8;
   }
 
   long here = ftell(fp);

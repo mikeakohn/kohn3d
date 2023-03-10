@@ -96,11 +96,11 @@ private:
   AviHeader avi_header;
   StreamHeader stream_header;
   StreamFormat stream_format;
-  std::vector<uint32_t> offsets;
+  //std::vector<uint32_t> offsets;
 
   int depth;
   long offset_to_image;
-  long list_marker;
+  long movi_marker;
   long avi_header_marker;
 };
 
