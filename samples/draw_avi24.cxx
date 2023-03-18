@@ -9,7 +9,7 @@ int main(int argc, char *argv[])
 
   kohn3d.create("test.avi");
   kohn3d.clear();
-  kohn3d.set_fps(10);
+  kohn3d.set_fps(30);
   kohn3d.init_end();
 
   Kohn3D::Triangle triangles[12];
@@ -89,7 +89,7 @@ int main(int argc, char *argv[])
     0xffff00,
   };
 
-  for (float r = 0; r < 6.18; r += 6.18 / 30)
+  for (float r = 0; r < 6.18 * 3; r += 6.18 / 120)
   {
     rotation.rz = r;
     rotation.ry = r + 2;

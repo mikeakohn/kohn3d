@@ -141,3 +141,11 @@ pretty much the same as the C API:
     draw_triangle(gif, triangle, rotation, x, y, z, color_index);
     void write_frame(gif);
 
+TODO
+====
+
+1. STL file reading.
+2. Projections.
+3. BMP file pasting.
+4. BMP file textures.
+

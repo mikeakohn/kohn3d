@@ -6,11 +6,15 @@ CFLAGS=-Wall -O3 -std=c++11 $(DEBUG) $(INCLUDES)
 VPATH=../src
 
 OBJECTS= \
+  ImageReader.o \
+  ImageReaderBmp.o \
+  ImageReaderGif.o \
   ImageWriter.o \
   ImageWriterAvi.o \
   ImageWriterBmp.o \
   ImageWriterGif.o \
-  Kohn3D.o
+  Kohn3D.o \
+  Picture.o
 
 default: $(OBJECTS)
 	$(CC) -o ../parse_gif ../src/parse_gif.c -Wall -O3 $(DEBUG)
