@@ -13,19 +13,19 @@
 #include <stdlib.h>
 #include <string.h>
 
-#include "ImageReader.h"
+#include "ImageReaderGif.h"
 
-ImageReader::ImageReader() :
-  image { nullptr },
-  width { 0 },
-  height { 0 }
+ImageReaderGif::ImageReaderGif() : ImageReader()
 {
-  memset(palette, 0, sizeof(palette));
 }
 
-ImageReader::~ImageReader()
+ImageReaderGif::~ImageReaderGif()
 {
-  if (image != nullptr) { free(image); }
-  image = nullptr;
+}
+
+int ImageReaderGif::load(const char *filename)
+{
+
+  return 0;
 }
 

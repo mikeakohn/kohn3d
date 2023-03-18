@@ -61,7 +61,7 @@ int parse_bmp(FILE *in)
   printf("     compression: 0x%08x\n", read_int32(in));
   printf("      image_size: %d\n", read_int32(in));
   printf("    vertical_res: %d\n", read_int32(in));
-  printf("   horzontal_res: %d\n", read_int32(in));
+  printf("  horizontal_res: %d\n", read_int32(in));
   colors = read_int32(in);
   printf("     colors_used: %d\n", colors);
   printf("important_colors: %d\n", read_int32(in));

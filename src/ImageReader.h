@@ -27,6 +27,16 @@ public:
   uint32_t *get_image() { return image; }
 
 protected:
+  void set_pixel(uint32_t color, int x, int y)
+  {
+    if (x < 0) { return; }
+    if (y < 0) { return; }
+    if (x >= width) { return; }
+    if (y >= height) { return; }
+
+    image[(y * width) + x] = color;
+  }
+
   uint32_t read_uint16()
   {
     uint32_t n;
@@ -37,7 +47,7 @@ protected:
     return n;
   }
 
-  uint32_t read_uint32(int value)
+  uint32_t read_uint32()
   {
     uint32_t n;
 
