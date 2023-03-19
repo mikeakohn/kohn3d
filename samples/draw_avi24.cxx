@@ -1,5 +1,6 @@
 #include <stdio.h>
 #include <stdlib.h>
+#include <math.h>
 
 #include "Kohn3D.h"
 
@@ -11,6 +12,15 @@ int main(int argc, char *argv[])
   kohn3d.clear();
   kohn3d.set_fps(30);
   kohn3d.init_end();
+
+  Picture background;
+  //background.create(640, 480);
+
+  if (background.load_bmp("samples/assets/coins_640x408x24.bmp") != 0)
+  {
+    printf("Error loading background BMP.\n");
+    exit(1);
+  }
 
   Kohn3D::Triangle triangles[12];
 
@@ -89,6 +99,15 @@ int main(int argc, char *argv[])
     0xffff00,
   };
 
+#if 0
+  for (int n = 0; n < 320; n++)
+  {
+    background.set_pixel(n, n, 0xffffff);
+  }
+#endif
+
+  float bg_r = 0;
+
   for (float r = 0; r < 6.18 * 3; r += 6.18 / 120)
   {
     rotation.rz = r;
@@ -96,6 +115,9 @@ int main(int argc, char *argv[])
     rotation.rx = r + 3;
 
     kohn3d.clear();
+
+    kohn3d.draw_picture(background, -100 + 50 * cos(bg_r), -100 + 50 * sin(bg_r));
+    bg_r += 0.1;
 
     for (int n = 0; n < 12; n++)
     {

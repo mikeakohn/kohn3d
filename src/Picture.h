@@ -27,6 +27,28 @@ public:
   int get_width() { return width; }
   int get_height() { return height; }
 
+  void set_data(uint32_t *value)
+  {
+    if (data != nullptr) { free(data); }
+    data = value;
+  }
+
+  uint32_t get_pixel(int x, int y)
+  {
+    if (x < 0 || x >= width) { return 0; }
+    if (y < 0 || y >= height) { return 0; }
+
+    return data[(y * width) + x];
+  }
+
+  void set_pixel(int x, int y, uint32_t color)
+  {
+    if (x < 0 || x >= width) { return; }
+    if (y < 0 || y >= height) { return; }
+
+    data[(y * width) + x] = color;
+  }
+
 private:
   uint32_t *data;
   int width;

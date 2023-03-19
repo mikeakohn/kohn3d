@@ -16,6 +16,7 @@
 #include "ImageReader.h"
 
 ImageReader::ImageReader() :
+  fp { NULL },
   image { nullptr },
   width { 0 },
   height { 0 }

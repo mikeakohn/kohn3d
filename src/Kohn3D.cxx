@@ -745,6 +745,28 @@ void Kohn3D::draw_triangle(
   draw_triangle(v, x, y, z, colors);
 }
 
+void Kohn3D::draw_picture(Picture &picture, int x0, int y0)
+{
+  int w = picture.get_width();
+  int h = picture.get_height();
+  int y = y0;
+
+  for (int m = 0; m < h; m++)
+  {
+    int x = x0;
+
+    for (int n = 0; n < w; n++)
+    {
+      uint32_t color = picture.get_pixel(n, m);
+
+      draw_pixel(x, y, color);
+      x++;
+    }
+
+    y++;
+  }
+}
+
 void Kohn3D::write_frame()
 {
   image_writer->add_frame(picture, palette);

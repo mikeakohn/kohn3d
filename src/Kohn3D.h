@@ -19,6 +19,7 @@
 #include "ImageWriterBmp.h"
 #include "ImageWriterGif.h"
 #include "ImageWriterAvi.h"
+#include "Picture.h"
 
 class Kohn3D
 {
@@ -137,6 +138,8 @@ public:
     const Rotation &rotation,
     int x, int y, int z,
     uint32_t *colors);
+
+  void draw_picture(Picture &picture, int x, int y);
 
   void write_frame();
 

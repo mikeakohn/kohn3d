@@ -1,7 +1,7 @@
 *.so
 *.o
 *.gif
-*.bmp
+/*.bmp
 *.avi
 *.swp
 draw_bars

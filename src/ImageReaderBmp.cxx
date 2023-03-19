@@ -25,6 +25,19 @@ ImageReaderBmp::~ImageReaderBmp()
 
 int ImageReaderBmp::load(const char *filename)
 {
+  fp = fopen(filename, "rb");
+
+  if (fp == NULL) { return -2; }
+  int result = read_file();
+  fclose(fp);
+
+  fp = NULL;
+
+  return result;
+}
+
+int ImageReaderBmp::read_file()
+{
   if (read_header() != 0) { return -1; }
   if (read_info_header() != 0) { return -1; }
 
@@ -34,7 +47,35 @@ int ImageReaderBmp::load(const char *filename)
     palette[n] = color;
   }
 
-  return 0;
+  const int length = width * height * sizeof(uint32_t);
+  image = (uint32_t *)malloc(length);
+  memset(image, 0, length);
+
+  fseek(fp, header.data_offset, SEEK_SET);
+
+  if (info_header.compression == 0)
+  {
+    switch (info_header.bits_per_pixel)
+    {
+      case 4: return load_4bit();
+      case 8: return load_8bit();
+      case 24: return load_24bit();
+      case 32: return load_32bit();
+      default: return -1;
+    }
+  }
+    else
+  if (info_header.compression == 1)
+  {
+    return load_rle8();
+  }
+    else
+  if (info_header.compression == 2)
+  {
+    return load_rle4();
+  }
+
+  return -3;
 }
 
 int ImageReaderBmp::read_header()
@@ -75,35 +116,7 @@ int ImageReaderBmp::read_info_header()
     height = -info_header.height;
   }
 
-  const int length = width * height * sizeof(uint32_t);
-  image = (uint32_t *)malloc(length);
-  memset(image, 0, length);
-
-  fseek(fp, header.data_offset, SEEK_SET);
-
-  if (info_header.compression == 0)
-  {
-    switch (info_header.bits_per_pixel)
-    {
-      case 4: return load_4bit();
-      case 8: return load_8bit();
-      case 24: return load_24bit();
-      case 32: return load_32bit();
-      default: return -1;
-    }
-  }
-    else
-  if (info_header.compression == 1)
-  {
-    return load_rle8();
-  }
-    else
-  if (info_header.compression == 2)
-  {
-    return load_rle4();
-  }
-
-  return -1;
+  return 0;
 }
 
 int ImageReaderBmp::load_4bit()
@@ -121,8 +134,8 @@ int ImageReaderBmp::load_4bit()
       int index = getc(fp);
       if (index > 0xff) { return -1; }
 
-      set_pixel(palette[index >> 4], x, y);
-      set_pixel(palette[index & 0xf], x, y);
+      set_pixel(x, y, palette[index >> 4]);
+      set_pixel(x, y, palette[index & 0xf]);
     }
 
     for (int n = 0; n < padding; n++) { getc(fp); }
@@ -143,7 +156,7 @@ int ImageReaderBmp::load_8bit()
       int index = getc(fp);
       if (index > 0xff) { return -1; }
 
-      set_pixel(palette[index], x, y);
+      set_pixel(x, y, palette[index]);
     }
 
     for (int n = 0; n < padding; n++) { getc(fp); }
@@ -180,7 +193,7 @@ int ImageReaderBmp::load_rle8()
 
       for (n = 0; n < count; n++)
       {
-        set_pixel(color, x, y);
+        set_pixel(x, y, color);
         x++;
 
         // This shouldn't be needed?
@@ -226,7 +239,7 @@ int ImageReaderBmp::load_rle8()
         {
           color = palette[getc(fp) & 0xff];
 
-          set_pixel(color, x, y);
+          set_pixel(x, y, color);
           x++;
 
           // This shouldn't be needed?
@@ -257,7 +270,7 @@ int ImageReaderBmp::load_24bit()
       color |= getc(fp) << 8;
       color |= getc(fp) << 16;
 
-      set_pixel(color, x, y);
+      set_pixel(x, y, color);
     }
 
     for (int n = 0; n < padding; n++) { getc(fp); }
@@ -274,7 +287,7 @@ int ImageReaderBmp::load_32bit()
   {
     for (x = 0; x < width; x++)
     {
-      set_pixel(read_uint32(), x, y);
+      set_pixel(x, y, read_uint32());
     }
   }
 

@@ -6,7 +6,8 @@ CFLAGS=-Wall -O3 -std=c++11 $(DEBUG)
 default:
 	@+make -C build
 
-sample:
+.PHONY: samples
+samples:
 	$(CXX) -o draw_bars samples/draw_bars.cxx \
 	  -L. -lkohn3d -Isrc \
 	  $(CFLAGS)

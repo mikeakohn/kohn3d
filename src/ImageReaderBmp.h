@@ -49,18 +49,19 @@ private:
     uint32_t important_colors;
   } info_header;
 
-  void set_pixel(uint32_t color, int x, int y)
+  void set_pixel(int x, int y, uint32_t color)
   {
     if (do_upside_down)
     {
-      ImageReader::set_pixel(color, x, height - 1 - y);
+      ImageReader::set_pixel(x, height - 1 - y, color);
     }
       else
     {
-      ImageReader::set_pixel(color, x, y);
+      ImageReader::set_pixel(x, y, color);
     }
   }
 
+  int read_file();
   int read_header();
   int read_info_header();
   int load_4bit();

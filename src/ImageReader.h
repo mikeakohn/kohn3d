@@ -24,10 +24,16 @@ public:
 
   int get_width() { return width; }
   int get_height() { return height; }
-  uint32_t *get_image() { return image; }
+
+  uint32_t *get_image()
+  {
+    uint32_t *temp = image;
+    image = nullptr;
+    return temp;
+  }
 
 protected:
-  void set_pixel(uint32_t color, int x, int y)
+  void set_pixel(int x, int y, uint32_t color)
   {
     if (x < 0) { return; }
     if (y < 0) { return; }

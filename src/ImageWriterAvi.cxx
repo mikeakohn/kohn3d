@@ -133,7 +133,8 @@ int ImageWriterAvi::add_frame(uint8_t *image, uint32_t *color_table)
 
   if (depth == 8)
   {
-    for (y = height - 1; y >= 0; y--)
+    //for (y = height - 1; y >= 0; y--)
+    for (y = 0; y < height; y++)
     {
       for (x = 0; x < width; x++)
       {
@@ -147,7 +148,8 @@ int ImageWriterAvi::add_frame(uint8_t *image, uint32_t *color_table)
   {
     uint32_t *image32 = (uint32_t *)image;
 
-    for (y = height - 1; y >= 0; y--)
+    //for (y = height - 1; y >= 0; y--)
+    for (y = 0; y < height; y++)
     {
       for (x = 0; x < width; x++)
       {
