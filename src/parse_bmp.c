@@ -39,6 +39,7 @@ static int read_int32(FILE *in)
 int parse_bmp(FILE *in)
 {
   char signature[4];
+  uint32_t header_size;
   int colors;
   int n;
 
@@ -52,8 +53,11 @@ int parse_bmp(FILE *in)
   printf("          unused: %d\n", read_int16(in));
   printf("     data_offset: %d\n", read_int32(in));
 
+  long marker = ftell(in);
+
   printf("-- info header --\n");
-  printf("     header_size: %d\n", read_int32(in));
+  header_size = read_int32(in);
+  printf("     header_size: %d\n", header_size);
   printf("           width: %d\n", read_int32(in));
   printf("          height: %d\n", read_int32(in));
   printf("          planes: %d\n", read_int16(in));
@@ -66,7 +70,14 @@ int parse_bmp(FILE *in)
   printf("     colors_used: %d\n", colors);
   printf("important_colors: %d\n", read_int32(in));
 
-  printf("-- color palette --\n");
+  long here = ftell(in);
+
+  if (marker + header_size != here)
+  {
+    fseek(in, header_size - (here - marker), SEEK_CUR);
+  }
+
+  printf("\n-- color palette 0x%lx --\n", ftell(in));
   for (n = 0; n < colors; n++)
   {
     if ((n % 4) == 0) { printf("\n  "); }

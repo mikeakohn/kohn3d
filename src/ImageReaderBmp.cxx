@@ -75,6 +75,10 @@ int ImageReaderBmp::read_file()
     return load_rle4();
   }
 
+  printf("Error: Unknown BMP format bits_per_pixel=%d, compression=%d\n",
+    info_header.bits_per_pixel,
+    info_header.compression);
+
   return -3;
 }
 
@@ -92,6 +96,8 @@ int ImageReaderBmp::read_header()
 
 int ImageReaderBmp::read_info_header()
 {
+  long marker = ftell(fp);
+
   info_header.header_size = read_uint32();
   info_header.width = read_uint32();
   info_header.height = read_uint32();
@@ -114,6 +120,13 @@ int ImageReaderBmp::read_info_header()
     else
   {
     height = -info_header.height;
+  }
+
+  long here = ftell(fp);
+
+  if (marker + info_header.header_size != here)
+  {
+    fseek(fp, info_header.header_size - (here - marker), SEEK_CUR);
   }
 
   return 0;
@@ -186,8 +199,7 @@ int ImageReaderBmp::load_rle8()
 
     if (ch != 0)
     {
-      count = getc(fp);
-      if (count == EOF) { return -1; }
+      count = ch;
 
       color = palette[getc(fp) & 0xff];
 
@@ -197,7 +209,7 @@ int ImageReaderBmp::load_rle8()
         x++;
 
         // This shouldn't be needed?
-        if (x >= width) { x = 0; y++; }
+        //if (x >= width) { x = 0; y++; }
       }
     }
       else
@@ -243,7 +255,7 @@ int ImageReaderBmp::load_rle8()
           x++;
 
           // This shouldn't be needed?
-          if (x >= width) { x = 0; y++; }
+          //if (x >= width) { x = 0; y++; }
         }
 
         if ((count & 1) == 1) { getc(fp); }
