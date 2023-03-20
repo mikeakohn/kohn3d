@@ -165,8 +165,10 @@ int parse_gif(FILE *in)
   {
     parse_extensions(in);
 
+    uint8_t image_separator = getc(in);
+
     printf("-- image descriptor --\n");
-    printf("image_separator: %c\n", getc(in));
+    printf("image_separator: %c %02x\n", image_separator, image_separator);
     printf("  left_position: %d\n", read_int16(in));
     printf("   top_position: %d\n", read_int16(in));
     printf("          width: %d\n", read_int16(in));
