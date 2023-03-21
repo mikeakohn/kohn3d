@@ -60,6 +60,7 @@ int ImageReaderGif::read_file()
     if (separator == ',')
     {
       read_image_descriptor();
+      read_image();
     }
       else
     if (separator == 0x21)
@@ -206,6 +207,116 @@ int ImageReaderGif::read_application_extension(Extension &extension)
   if (memcmp(application_extension.identifier, "NETSCAPE", 8) == 0)
   {
     loop_count = data[2] | ((int)data[3] << 8);
+  }
+
+  return 0;
+}
+
+int ImageReaderGif::read_image()
+{
+  Node nodes[4096];
+  int n, x, y;
+  int code_size = getc(fp);
+  int start_table_size = (1 << code_size);
+  int clear_code = start_table_size;
+  int eof_code = start_table_size + 1;
+
+  code_size++;
+
+  for (n = 0; n < start_table_size; n++)
+  {
+    nodes[n].prev = -1;
+    nodes[n].color = n;
+  }
+
+  //x = image_descriptor.left_position;
+  //y = image_descriptor.top_position;
+  x = 0;
+  y = 0;
+
+  BitStream bit_stream;
+  bit_stream.set_code_size(code_size);
+
+  bool running = false;
+  int last_code = -1;
+  int total_bytes = image_descriptor.width * image_descriptor.height;
+
+  while (running)
+  {
+    int next_code = start_table_size + 2;
+    int data_count = getc(fp);
+    if (data_count == 0) { break; }
+    bit_stream.read(fp, data_count);
+
+    while (true)
+    {
+      int code = bit_stream.get_next();
+      if (code == -1) { break; }
+
+      if (next_code == 4096)
+      {
+        printf("Error: next_code overflow\n");
+        running = false;
+        break;
+      }
+
+      if (code == clear_code)
+      {
+        bit_stream.set_code_size(code_size);
+        continue;
+      }
+
+      if (code == eof_code)
+      {
+        running = false;
+        break;
+      }
+
+      if (code < next_code)
+      {
+        int index = code;
+
+        while (index != -1)
+        {
+          set_pixel(x, y, nodes[index].color);
+          index = nodes[index].prev;
+          total_bytes++;
+        }
+
+        nodes[next_code].color = code;
+        nodes[next_code].prev = last_code;
+
+        if (next_code == (int)bit_stream.mask) { bit_stream.inc_code_size(); }
+        next_code++;
+      }
+        else
+      {
+        int index = last_code;
+        int last_color = -1;
+
+        while (index != -1)
+        {
+          last_color = nodes[index].color;
+          set_pixel(x, y, last_color);
+          index = nodes[index].prev;
+          total_bytes++;
+        }
+
+        nodes[next_code].color = last_color;
+        nodes[next_code].prev = last_code;
+
+        if (next_code == (int)bit_stream.mask) { bit_stream.inc_code_size(); }
+        next_code++;
+      }
+
+      last_code = code;
+    }
+  }
+
+  while (total_bytes != 0)
+  {
+    set_pixel(x, y, header.bg_color_index);
+    total_bytes--;
   }
 
   return 0;

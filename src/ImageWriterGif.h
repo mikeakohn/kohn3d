@@ -62,7 +62,7 @@ private:
 
   struct BitStream
   {
-    BitStream() : data{0}, bitptr{0} { }
+    BitStream() : data { 0 }, bitptr { 0 } { }
 
     int size() { return bitptr; }
     void dump() { printf("--> data=0x%08x bitptr=%d\n", data, bitptr); }

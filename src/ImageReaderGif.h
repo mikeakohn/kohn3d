@@ -82,6 +82,69 @@ private:
     // Application data and terminator;
   } application_extension;
 
+  struct Node
+  {
+    int prev;
+    uint8_t color;
+  };
+
+  struct BitStream
+  {
+    BitStream() :
+      holding { 0 },
+      bitptr { 0 },
+      code_size { 0 },
+      data_count { 0 },
+      data_next { 0 }
+    {
+    }
+
+    void set_code_size(int code_size)
+    {
+      this->code_size = code_size;
+      mask = (1 << code_size) - 1;
+    }
+
+    void inc_code_size()
+    {
+      code_size++;
+      mask = (1 << code_size) - 1;
+    }
+
+    int read(FILE *fp, int data_count)
+    {
+      this->data_count = data_count;
+      if (fread(data, 1, data_count, fp) != (size_t)data_count) { return -1; }
+
+      return 0;
+    }
+
+    int get_next()
+    {
+      while (bitptr < code_size)
+      {
+        if (data_next == data_count) { return -1; }
+
+        holding |= data[data_next++] << bitptr;
+        bitptr += 8;
+      }
+
+      int code = holding & mask;
+      holding = holding >> code_size;
+      bitptr -= code_size;
+
+      return code;
+    }
+
+    uint32_t holding;
+    int bitptr;
+    uint32_t mask;
+    int code_size;
+    int data_count;
+    int data_next;
+    uint8_t data[256];
+  };
+
   int read_file();
   int read_header();
   int read_image_descriptor();
@@ -89,6 +152,23 @@ private:
   int read_plain_text(Extension &extension);
   int read_graphics_control(Extension &extension);
   int read_application_extension(Extension &extension);
+  int read_image();
+
+  void set_pixel(int &x, int &y, uint32_t color)
+  {
+    ImageReader::set_pixel(
+      image_descriptor.left_position + x,
+      image_descriptor.top_position + y,
+      color);
+
+    x++;
+
+    if (x == image_descriptor.width)
+    {
+      x = 0;
+      y++;
+    }
+  }
 
   int global_colors;
   int local_colors;
