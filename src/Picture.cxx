@@ -1,5 +1,4 @@
 /*
-
   Kohn3D - GIF drawing library.
 
   Copyright 2023 - Michael Kohn (mike@mikekohn.net)
@@ -14,6 +13,7 @@
 #include <string.h>
 
 #include "ImageReaderBmp.h"
+#include "ImageReaderGif.h"
 #include "Picture.h"
 
 Picture::Picture() :
@@ -42,6 +42,18 @@ int Picture::create(int width, int height)
 int Picture::load_bmp(const char *filename)
 {
   ImageReaderBmp image_reader;
+
+  int result = image_reader.load(filename);
+  set_data(image_reader.get_image());
+  width = image_reader.get_width();
+  height = image_reader.get_height();
+
+  return result;
+}
+
+int Picture::load_gif(const char *filename)
+{
+  ImageReaderGif image_reader;
 
   int result = image_reader.load(filename);
   set_data(image_reader.get_image());

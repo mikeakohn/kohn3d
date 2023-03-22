@@ -13,12 +13,19 @@ int main(int argc, char *argv[])
   kohn3d.set_fps(30);
   kohn3d.init_end();
 
-  Picture background;
-  //background.create(640, 480);
+  Picture picture_background;
+  Picture picture_hello;
+  //picture_background.create(640, 480);
 
-  if (background.load_bmp("samples/assets/coins_640x408x24.bmp") != 0)
+  if (picture_background.load_bmp("samples/assets/coins_640x408x24.bmp") != 0)
   {
     printf("Error loading background BMP.\n");
+    exit(1);
+  }
+
+  if (picture_hello.load_gif("samples/assets/hello.gif") != 0)
+  {
+    printf("Error loading hello GIF.\n");
     exit(1);
   }
 
@@ -102,7 +109,7 @@ int main(int argc, char *argv[])
 #if 0
   for (int n = 0; n < 320; n++)
   {
-    background.set_pixel(n, n, 0xffffff);
+    picture_background.set_pixel(n, n, 0xffffff);
   }
 #endif
 
@@ -116,8 +123,9 @@ int main(int argc, char *argv[])
 
     kohn3d.clear();
 
-    kohn3d.draw_picture(background, -100 + 50 * cos(bg_r), -100 + 50 * sin(bg_r));
+    kohn3d.draw_picture(picture_background, -100 + 50 * cos(bg_r), -100 + 50 * sin(bg_r));
     bg_r += 0.1;
+    kohn3d.draw_picture(picture_hello, 50 + 50 * sin(bg_r), 100);
 
     for (int n = 0; n < 12; n++)
     {

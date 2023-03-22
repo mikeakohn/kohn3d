@@ -71,7 +71,7 @@ private:
   {
     uint8_t fields;
     uint16_t delay_time;
-    uint8_t transparent_index;
+    uint32_t transparent_index;
     uint8_t terminator;
   } graphics_control;
 
@@ -154,12 +154,19 @@ private:
   int read_application_extension(Extension &extension);
   int read_image();
 
-  void set_pixel(int &x, int &y, uint32_t color)
+  void set_pixel(int &x, int &y, uint32_t index)
   {
-    ImageReader::set_pixel(
-      image_descriptor.left_position + x,
-      image_descriptor.top_position + y,
-      color);
+    uint32_t color =
+      local_colors != 0 ?
+      local_palette[index] : palette[index];
+
+    if (color != graphics_control.transparent_index)
+    {
+      ImageReader::set_pixel(
+        image_descriptor.left_position + x,
+        image_descriptor.top_position + y,
+        color);
+    }
 
     x++;
 

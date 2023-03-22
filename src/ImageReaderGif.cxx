@@ -27,6 +27,8 @@ ImageReaderGif::ImageReaderGif() :
   memset(&plain_text, 0, sizeof(plain_text));
   memset(&graphics_control, 0, sizeof(graphics_control));
   memset(&application_extension, 0, sizeof(application_extension));
+
+  graphics_control.transparent_index = 256;
 }
 
 ImageReaderGif::~ImageReaderGif()
@@ -49,6 +51,13 @@ int ImageReaderGif::load(const char *filename)
 int ImageReaderGif::read_file()
 {
   if (read_header() != 0) { return -1; }
+
+  width = header.width;
+  height = header.height;
+
+  const int length = width * height * sizeof(uint32_t);
+  image = (uint32_t *)malloc(length);
+  memset(image, 0, length);
 
   while (true)
   {
@@ -214,12 +223,13 @@ int ImageReaderGif::read_application_extension(Extension &extension)
 
 int ImageReaderGif::read_image()
 {
-  Node nodes[4096];
   int n, x, y;
   int code_size = getc(fp);
   int start_table_size = (1 << code_size);
   int clear_code = start_table_size;
   int eof_code = start_table_size + 1;
+  Node nodes[4096];
+  uint8_t temp[4096];
 
   code_size++;
 
@@ -272,13 +282,15 @@ int ImageReaderGif::read_image()
         break;
       }
 
+      int length = 0;
+
       if (code < next_code)
       {
         int index = code;
 
         while (index != -1)
         {
-          set_pixel(x, y, nodes[index].color);
+          temp[length++] = nodes[index].color;
           index = nodes[index].prev;
           total_bytes++;
         }
@@ -297,7 +309,7 @@ int ImageReaderGif::read_image()
         while (index != -1)
         {
           last_color = nodes[index].color;
-          set_pixel(x, y, last_color);
+          temp[length++] = last_color;
           index = nodes[index].prev;
           total_bytes++;
         }
@@ -307,6 +319,11 @@ int ImageReaderGif::read_image()
 
         if (next_code == (int)bit_stream.mask) { bit_stream.inc_code_size(); }
         next_code++;
+      }
+
+      for (int n = length - 1; n >= 0; n--)
+      {
+        set_pixel(x, y, temp[n]);
       }
 
       last_code = code;

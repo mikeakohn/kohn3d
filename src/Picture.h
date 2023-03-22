@@ -22,6 +22,7 @@ public:
 
   int create(int width, int height);
   int load_bmp(const char *filename);
+  int load_gif(const char *filename);
 
   uint32_t *get_data() { return data; }
   int get_width() { return width; }
