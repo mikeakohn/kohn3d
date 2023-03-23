@@ -61,10 +61,10 @@ int ImageReaderGif::read_file()
 
   while (true)
   {
-    char separator = getc(fp);
+    int separator = getc(fp);
 
     // End of file.
-    if (separator == ';') { break; }
+    if (separator == ';' || separator == EOF) { break; }
 
     if (separator == ',')
     {
@@ -148,6 +148,7 @@ int ImageReaderGif::read_extension()
   {
     case 0x01: read_plain_text(extension); break;
     case 0xf9: read_graphics_control(extension); break;
+    case 0xfe: read_comment(extension); break;
     case 0xff: read_application_extension(extension); break;
     default:   fseek(fp, extension.block_size, SEEK_SET); break;
   }
@@ -191,6 +192,27 @@ int ImageReaderGif::read_graphics_control(Extension &extension)
   graphics_control.delay_time = read_uint16();
   graphics_control.transparent_index = getc(fp);
   graphics_control.terminator = getc(fp);
+
+  return 0;
+}
+
+int ImageReaderGif::read_comment(Extension &extension)
+{
+  int length = extension.block_size;
+
+  while (true)
+  {
+    if (length == 0) { break; }
+
+    for (int n = 0; n < length; n++)
+    {
+      printf("%c", getc(fp));
+    }
+
+    length = getc(fp);
+  }
+
+  printf("\n");
 
   return 0;
 }
@@ -247,13 +269,13 @@ int ImageReaderGif::read_image()
   BitStream bit_stream;
   bit_stream.set_code_size(code_size);
 
-  bool running = false;
+  bool running = true;
   int last_code = -1;
-  int total_bytes = image_descriptor.width * image_descriptor.height;
+  int total_bytes = width * height;
+  int next_code = start_table_size + 2;
 
   while (running)
   {
-    int next_code = start_table_size + 2;
     int data_count = getc(fp);
     if (data_count == 0) { break; }
     bit_stream.read(fp, data_count);
@@ -263,6 +285,14 @@ int ImageReaderGif::read_image()
       int code = bit_stream.get_next();
       if (code == -1) { break; }
 
+      if (code == clear_code)
+      {
+        last_code = -1;
+        next_code = start_table_size + 2;
+        bit_stream.set_code_size(code_size);
+        continue;
+      }
+
       if (next_code == 4096)
       {
         printf("Error: next_code overflow\n");
@@ -270,16 +300,28 @@ int ImageReaderGif::read_image()
         break;
       }
 
-      if (code == clear_code)
-      {
-        bit_stream.set_code_size(code_size);
-        continue;
-      }
-
       if (code == eof_code)
       {
+        // Even though there is an EOF code, there is a block of 0
+        // size next (signifying end of data.
+        data_count = getc(fp);
+
+        if (data_count != 0)
+        {
+          printf("Error: EOF code detected, but next block is non-zero.\n");
+          return -1;
+        }
+
         running = false;
         break;
+      }
+
+      if (last_code == -1)
+      {
+        set_pixel(x, y, nodes[code].color);
+        last_code = code;
+        total_bytes--;
+        continue;
       }
 
       int length = 0;
@@ -292,14 +334,19 @@ int ImageReaderGif::read_image()
         {
           temp[length++] = nodes[index].color;
           index = nodes[index].prev;
-          total_bytes++;
+          total_bytes--;
         }
 
-        nodes[next_code].color = code;
+        nodes[next_code].color = temp[length - 1];
         nodes[next_code].prev = last_code;
 
         if (next_code == (int)bit_stream.mask) { bit_stream.inc_code_size(); }
         next_code++;
+
+        for (int n = length - 1; n >= 0; n--)
+        {
+          set_pixel(x, y, temp[n]);
+        }
       }
         else
       {
@@ -311,19 +358,21 @@ int ImageReaderGif::read_image()
           last_color = nodes[index].color;
           temp[length++] = last_color;
           index = nodes[index].prev;
-          total_bytes++;
+          total_bytes--;
         }
 
-        nodes[next_code].color = last_color;
+        nodes[next_code].color = temp[length - 1];
         nodes[next_code].prev = last_code;
 
         if (next_code == (int)bit_stream.mask) { bit_stream.inc_code_size(); }
         next_code++;
-      }
 
-      for (int n = length - 1; n >= 0; n--)
-      {
-        set_pixel(x, y, temp[n]);
+        for (int n = length - 1; n >= 0; n--)
+        {
+          set_pixel(x, y, temp[n]);
+        }
+
+        set_pixel(x, y, temp[length - 1]);
       }
 
       last_code = code;

@@ -114,6 +114,7 @@ private:
     int read(FILE *fp, int data_count)
     {
       this->data_count = data_count;
+      this->data_next = 0;
       if (fread(data, 1, data_count, fp) != (size_t)data_count) { return -1; }
 
       return 0;
@@ -151,6 +152,7 @@ private:
   int read_extension();
   int read_plain_text(Extension &extension);
   int read_graphics_control(Extension &extension);
+  int read_comment(Extension &extension);
   int read_application_extension(Extension &extension);
   int read_image();
 

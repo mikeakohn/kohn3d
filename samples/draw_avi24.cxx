@@ -125,7 +125,7 @@ int main(int argc, char *argv[])
 
     kohn3d.draw_picture(picture_background, -100 + 50 * cos(bg_r), -100 + 50 * sin(bg_r));
     bg_r += 0.1;
-    kohn3d.draw_picture(picture_hello, 50 + 50 * sin(bg_r), 100);
+    kohn3d.draw_picture(picture_hello, 50 + 50 * sin(bg_r), 180);
 
     for (int n = 0; n < 12; n++)
     {
