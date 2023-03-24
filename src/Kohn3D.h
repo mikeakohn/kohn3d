@@ -62,6 +62,8 @@ public:
   uint32_t *get_picture_32bit() { return picture_32bit; }
   void clear();
 
+  void enable_alpha_blending(bool value) { do_alpha_blending = value; }
+
   void draw_pixel(int x, int y, uint32_t color)
   {
     if (x < 0 || x >= width) { return; }
@@ -71,6 +73,8 @@ public:
 
     if (is_32bit)
     {
+      if (do_alpha_blending) { color = calculate_alpha(color, pixel); }
+
       picture_32bit[pixel] = color;
     }
       else
@@ -156,7 +160,9 @@ private:
   void sort_vertexes(Triangle &triangle, uint32_t *colors);
   void rotate(Triangle &triangle, const Rotation &rotation);
   void rotate(int &x, int &y, int &z, const Rotation &rotation);
+  uint32_t calculate_alpha(uint32_t color, int pixel);
 
+  bool do_alpha_blending;
   bool is_32bit;
   int width, height;
   int color_count;

@@ -53,11 +53,11 @@ private:
   {
     if (do_upside_down)
     {
-      ImageReader::set_pixel(x, height - 1 - y, color);
+      ImageReader::set_pixel(x, height - 1 - y, 0xff000000 | color);
     }
       else
     {
-      ImageReader::set_pixel(x, y, color);
+      ImageReader::set_pixel(x, y, 0xff000000 | color);
     }
   }
 

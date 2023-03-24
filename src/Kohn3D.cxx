@@ -18,6 +18,7 @@
 #include "Kohn3D.h"
 
 Kohn3D::Kohn3D(int width, int height, Format format) :
+  do_alpha_blending { false },
   is_32bit { false },
   width { width },
   height { height },
@@ -875,5 +876,33 @@ void Kohn3D::rotate(int &x, int &y, int &z, const Rotation &rotation)
     y = (x * s) + (y * c);
     x = t;
   }
+}
+
+uint32_t Kohn3D::calculate_alpha(uint32_t color, int pixel)
+{
+  int level = color >> 24;
+  if (level == 0) { return picture_32bit[pixel]; }
+  if (level == 0xff) { return color; }
+
+  uint32_t old = picture_32bit[pixel];
+  float color_fract = (float)level / 255.0f;
+  float old_fract = (float)(0xff - level) / 255.0f;
+
+  int old_r = ((old >> 16) & 0xff);
+  int old_g = ((old >> 8) & 0xff);
+  int old_b = (old & 0xff);
+  int color_r = ((color >> 16) & 0xff);
+  int color_g = ((color >> 8) & 0xff);
+  int color_b = (color & 0xff);
+
+  color_r = (color_r * color_fract) + (old_r * old_fract);
+  color_g = (color_g * color_fract) + (old_g * old_fract);
+  color_b = (color_b * color_fract) + (old_b * old_fract);
+
+  if (color_r > 255) { color_r = 255; }
+  if (color_g > 255) { color_g = 255; }
+  if (color_b > 255) { color_b = 255; }
+
+  return (color_r << 16) | (color_g << 8) | color_b;
 }
 

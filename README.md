@@ -146,6 +146,6 @@ TODO
 
 1. STL file reading.
 2. Projections.
-3. BMP file pasting.
-4. BMP file textures.
+3. BMP file textures.
+4. AVI files are upside down.
 

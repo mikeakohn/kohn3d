@@ -114,6 +114,9 @@ int main(int argc, char *argv[])
 #endif
 
   float bg_r = 0;
+  int alpha = 0xff;
+  int alpha_dx = -5;
+  int hello_pixel_count = picture_hello.get_pixel_count();
 
   for (float r = 0; r < 6.18 * 3; r += 6.18 / 120)
   {
@@ -124,8 +127,30 @@ int main(int argc, char *argv[])
     kohn3d.clear();
 
     kohn3d.draw_picture(picture_background, -100 + 50 * cos(bg_r), -100 + 50 * sin(bg_r));
-    bg_r += 0.1;
+
+    uint32_t alpha_mask = alpha << 24;
+
+    for (int n = 0; n < hello_pixel_count; n++)
+    {
+      uint32_t color = picture_hello.get_pixel(n);
+
+      if (color != 0)
+      {
+        color = color & 0xffffff;
+        color |= alpha_mask;
+        picture_hello.set_pixel(n, color);
+      }
+    }
+
+    alpha += alpha_dx;
+    if (alpha < 50) { alpha_dx = 5; }
+    if (alpha >= 255) { alpha_dx = -5; }
+
+    kohn3d.enable_alpha_blending(true);
     kohn3d.draw_picture(picture_hello, 50 + 50 * sin(bg_r), 180);
+    kohn3d.enable_alpha_blending(false);
+
+    bg_r += 0.1;
 
     for (int n = 0; n < 12; n++)
     {

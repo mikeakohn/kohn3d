@@ -158,17 +158,20 @@ private:
 
   void set_pixel(int &x, int &y, uint32_t index)
   {
-    uint32_t color =
-      local_colors != 0 ?
-      local_palette[index] : palette[index];
+    uint32_t color = 0;
 
-    if (color != graphics_control.transparent_index)
+    if (index != graphics_control.transparent_index)
     {
-      ImageReader::set_pixel(
-        image_descriptor.left_position + x,
-        image_descriptor.top_position + y,
-        color);
+      color =
+        local_colors != 0 ?
+        local_palette[index] : palette[index];
+        color |= 0xff000000;
     }
+
+    ImageReader::set_pixel(
+      image_descriptor.left_position + x,
+      image_descriptor.top_position + y,
+      color);
 
     x++;
 

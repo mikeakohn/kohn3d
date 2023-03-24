@@ -27,6 +27,7 @@ public:
   uint32_t *get_data() { return data; }
   int get_width() { return width; }
   int get_height() { return height; }
+  int get_pixel_count() { return width * height; }
 
   void set_data(uint32_t *value)
   {
@@ -48,6 +49,20 @@ public:
     if (y < 0 || y >= height) { return; }
 
     data[(y * width) + x] = color;
+  }
+
+  uint32_t get_pixel(int index)
+  {
+    if (index < 0 || index > width * height) { return 0; }
+
+    return data[index];
+  }
+
+  void set_pixel(int index, uint32_t color)
+  {
+    if (index < 0 || index > width * height) { return; }
+
+    data[index] = color;
   }
 
 private:
