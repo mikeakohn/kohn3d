@@ -63,3 +63,51 @@ int Picture::load_gif(const char *filename)
   return result;
 }
 
+void Picture::set_color_transparent(uint32_t value)
+{
+  int pixel_count = get_pixel_count();
+
+  for (int n = 0; n < pixel_count; n++)
+  {
+    uint32_t color = get_pixel(n);
+
+    if (color != value) { continue; }
+
+    color = color & 0xffffff;
+    set_pixel(n, color);
+  }
+}
+
+void Picture::update_alpha(uint8_t value)
+{
+  int pixel_count = get_pixel_count();
+  uint32_t alpha_mask = value << 24;
+
+  for (int n = 0; n < pixel_count; n++)
+  {
+    uint32_t color = get_pixel(n);
+
+    color = color & 0xffffff;
+    color |= alpha_mask;
+    set_pixel(n, color);
+  }
+}
+
+void Picture::update_alpha(uint8_t value, uint32_t ignore_color)
+{
+  int pixel_count = get_pixel_count();
+  uint32_t alpha_mask = value << 24;
+
+  for (int n = 0; n < pixel_count; n++)
+  {
+    uint32_t color = get_pixel(n);
+
+    if (color != ignore_color)
+    {
+      color = color & 0xffffff;
+      color |= alpha_mask;
+      set_pixel(n, color);
+    }
+  }
+}
+

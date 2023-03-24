@@ -28,6 +28,9 @@ public:
   int get_width() { return width; }
   int get_height() { return height; }
   int get_pixel_count() { return width * height; }
+  void set_color_transparent(uint32_t value);
+  void update_alpha(uint8_t value);
+  void update_alpha(uint8_t value, uint32_t ignore_color);
 
   void set_data(uint32_t *value)
   {
