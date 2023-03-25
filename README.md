@@ -146,6 +146,7 @@ TODO
 
 1. STL file reading.
 2. Projections.
-3. BMP file textures.
-4. AVI files are upside down.
+3. Scaled draw_picture().
+4. Textures in triangles.
+5. AVI files are upside down.
 

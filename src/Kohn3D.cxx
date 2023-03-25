@@ -746,7 +746,7 @@ void Kohn3D::draw_triangle(
   draw_triangle(v, x, y, z, colors);
 }
 
-void Kohn3D::draw_picture(Picture &picture, int x0, int y0)
+void Kohn3D::draw_picture(Picture &picture, int x0, int y0, int z)
 {
   int w = picture.get_width();
   int h = picture.get_height();
@@ -760,11 +760,58 @@ void Kohn3D::draw_picture(Picture &picture, int x0, int y0)
     {
       uint32_t color = picture.get_pixel(n, m);
 
-      draw_pixel(x, y, color);
+      if (z == INT32_MIN)
+      {
+        draw_pixel(x, y, color);
+      }
+        else
+      {
+        draw_pixel(x, y, color, z);
+      }
+
       x++;
     }
 
     y++;
+  }
+}
+
+void Kohn3D::draw_picture(
+  Picture &picture,
+  int x0,
+  int y0,
+  int width,
+  int height,
+  int z)
+{
+  int w = picture.get_width();
+  int h = picture.get_height();
+
+  double scale_x = (double)w / (double)width;
+  double scale_y = (double)h / (double)height;
+  double v = 0.0;
+
+  for (int y = 0; y < height; y++)
+  {
+    double u = 0.0;
+
+    for (int x = 0; x < width; x++)
+    {
+      uint32_t color = picture.get_pixel(u, v);
+
+      if (z == INT32_MIN)
+      {
+        draw_pixel(x0 + x, y0 + y, color);
+      }
+        else
+      {
+        draw_pixel(x0 + x, y0 + y, color, z);
+      }
+
+      u += scale_x;
+    }
+
+    v += scale_y;
   }
 }
 

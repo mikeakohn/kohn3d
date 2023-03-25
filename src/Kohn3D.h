@@ -143,7 +143,8 @@ public:
     int x, int y, int z,
     uint32_t *colors);
 
-  void draw_picture(Picture &picture, int x, int y);
+  void draw_picture(Picture &picture, int x, int y, int z = INT32_MIN);
+  void draw_picture(Picture &picture, int x, int y, int width, int height, int z = INT32_MIN);
 
   void write_frame();
 

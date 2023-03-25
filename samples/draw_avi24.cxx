@@ -116,6 +116,8 @@ int main(int argc, char *argv[])
   float bg_r = 0;
   int alpha = 0xff;
   int alpha_dx = -5;
+  int hello_width = 134 / 2;
+  int hello_height = 50 / 2;
 
   for (float r = 0; r < 6.18 * 3; r += 6.18 / 120)
   {
@@ -135,7 +137,11 @@ int main(int argc, char *argv[])
 
     kohn3d.enable_alpha_blending(true);
     kohn3d.draw_picture(picture_hello, 50 + 50 * sin(bg_r), 180);
+    kohn3d.draw_picture(picture_hello, 160, 10, hello_width, hello_height);
     kohn3d.enable_alpha_blending(false);
+
+    hello_width++;
+    hello_height++;
 
     bg_r += 0.1;
 
