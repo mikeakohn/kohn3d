@@ -258,11 +258,12 @@ void Kohn3D::draw_line(
 void Kohn3D::draw_line(
   int x0, int y0, int z0,
   int x1, int y1, int z1,
-  int r0, int g0, int b0,
-  int r1, int g1, int b1)
+  int a0, int r0, int g0, int b0,
+  int a1, int r1, int g1, int b1)
 {
   uint32_t color;
   double dz, z;
+  double da, a;
   double dr, r;
   double dg, g;
   double db, b;
@@ -273,6 +274,7 @@ void Kohn3D::draw_line(
     {
       exchange(x0, x1);
       exchange(z0, z1);
+      exchange(a0, a1);
       exchange(r0, r1);
       exchange(g0, g1);
       exchange(b0, b1);
@@ -281,19 +283,27 @@ void Kohn3D::draw_line(
     double dx = (double)(x1 - x0);
 
     z = z0;
+    a = a0;
     r = r0;
     g = g0;
     b = b0;
     dz = (double)(z1 - z0) / dx;
+    da = (double)(a1 - a0) / dx;
     dr = (double)(r1 - r0) / dx;
     dg = (double)(g1 - g0) / dx;
     db = (double)(b1 - b0) / dx;
 
     for (int x = x0; x <= x1; x++)
     {
-      color = ((int)r << 16) | ((int)g << 8) | (int)b;
+      color =
+        ((uint32_t)a << 24) |
+        ((uint32_t)r << 16) |
+        ((uint32_t)g << 8) |
+         (uint32_t)b;
+
       draw_pixel(x, y0, color, z);
       z += dz;
+      a += da;
       r += dr;
       g += dg;
       b += db;
@@ -308,6 +318,7 @@ void Kohn3D::draw_line(
     {
       exchange(y0, y1);
       exchange(z0, z1);
+      exchange(a0, a1);
       exchange(r0, r1);
       exchange(g0, g1);
       exchange(b0, b1);
@@ -316,19 +327,27 @@ void Kohn3D::draw_line(
     double dy = (double)(y1 - y0);
 
     z = z0;
+    a = a0;
     r = r0;
     g = g0;
     b = b0;
     dz = (double)(z1 - z0) / dy;
+    da = (double)(a1 - a0) / dy;
     dr = (double)(r1 - r0) / dy;
     dg = (double)(g1 - g0) / dy;
     db = (double)(b1 - b0) / dy;
 
     for (int y = y0; y <= y1; y++)
     {
-      color = ((int)r << 16) | ((int)g << 8) | (int)b;
+      color =
+        ((uint32_t)a << 24) |
+        ((uint32_t)r << 16) |
+        ((uint32_t)g << 8) |
+         (uint32_t)b;
+
       draw_pixel(x0, y, color);
       z += dz;
+      a += da;
       r += dr;
       g += dg;
       b += db;
@@ -604,45 +623,51 @@ void Kohn3D::draw_triangle(
 
   sort_vertexes(v, colors);
 
-  double r0 = (colors[0] >> 16) & 0xff;
-  double g0 = (colors[0] >> 8) & 0xff;
-  double b0 =  colors[0] & 0xff;
-  double r1 = (colors[1] >> 16) & 0xff;
-  double g1 = (colors[1] >> 8) & 0xff;
-  double b1 =  colors[1] & 0xff;
-  double r2 = (colors[2] >> 16) & 0xff;
-  double g2 = (colors[2] >> 8) & 0xff;
-  double b2 =  colors[2] & 0xff;
+  double a0, r0, g0, b0;
+  double a1, r1, g1, b1;
+  double a2, r2, g2, b2;
+
+  split_rgb(colors[0], a0, r0, g0, b0);
+  split_rgb(colors[1], a1, r1, g1, b1);
+  split_rgb(colors[2], a2, r2, g2, b2);
+
+  double delta_y1y0 = (double)(v.y1 - v.y0);
+  double delta_y2y0 = (double)(v.y2 - v.y0);
+  double delta_y2y1 = (double)(v.y2 - v.y1);
 
   if (v.y0 == v.y1)
   {
-    double dxdy_0 = (double)(v.x2 - v.x0) / (double)(v.y2 - v.y0);
-    double dxdy_1 = (double)(v.x2 - v.x1) / (double)(v.y2 - v.y1);
-    double dzdy_0 = (double)(v.z2 - v.z0) / (double)(v.y2 - v.y0);
-    double dzdy_1 = (double)(v.z2 - v.z1) / (double)(v.y2 - v.y1);
+    double dxdy_0 = (double)(v.x2 - v.x0) / delta_y2y0;;
+    double dxdy_1 = (double)(v.x2 - v.x1) / delta_y2y1;
+    double dzdy_0 = (double)(v.z2 - v.z0) / delta_y2y0;
+    double dzdy_1 = (double)(v.z2 - v.z1) / delta_y2y1;
     double x0 = v.x0;
     double x1 = v.x1;
     double z0 = v.z0;
     double z1 = v.z1;
 
-    double dr0dy = (r2 - r0) / (double)(v.y2 - v.y0);
-    double dg0dy = (g2 - g0) / (double)(v.y2 - v.y0);
-    double db0dy = (b2 - b0) / (double)(v.y2 - v.y0);
-    double dr1dy = (r2 - r1) / (double)(v.y2 - v.y1);
-    double dg1dy = (g2 - g1) / (double)(v.y2 - v.y1);
-    double db1dy = (b2 - b1) / (double)(v.y2 - v.y1);
+    double da0dy = (a2 - a0) / delta_y2y0;
+    double dr0dy = (r2 - r0) / delta_y2y0;
+    double dg0dy = (g2 - g0) / delta_y2y0;
+    double db0dy = (b2 - b0) / delta_y2y0;
+    double da1dy = (a2 - a1) / delta_y2y1;
+    double dr1dy = (r2 - r1) / delta_y2y1;
+    double dg1dy = (g2 - g1) / delta_y2y1;
+    double db1dy = (b2 - b1) / delta_y2y1;
 
     for (int y0 = v.y0; y0 < v.y2; y0++)
     {
-      draw_line((int)x0 + x, y0 + y, (int)z0 + z, (int)x1 + x, y0 + y, (int)z1 + z, r0, g0, b0, r1, g1, b1);
+      draw_line((int)x0 + x, y0 + y, (int)z0 + z, (int)x1 + x, y0 + y, (int)z1 + z, a0, r0, g0, b0, a1, r1, g1, b1);
 
       x0 += dxdy_0;
       x1 += dxdy_1;
       z0 += dzdy_0;
       z1 += dzdy_1;
+      a0 += da0dy;
       r0 += dr0dy;
       g0 += dg0dy;
       b0 += db0dy;
+      a1 += da1dy;
       r1 += dr1dy;
       g1 += dg1dy;
       b1 += db1dy;
@@ -651,24 +676,27 @@ void Kohn3D::draw_triangle(
     return;
   }
 
-  double dxdy_0 = (double)(v.x2 - v.x0) / (double)(v.y2 - v.y0);
-  double dzdy_0 = (double)(v.z2 - v.z0) / (double)(v.y2 - v.y0);
+  double dxdy_0 = (double)(v.x2 - v.x0) / delta_y2y0;
+  double dzdy_0 = (double)(v.z2 - v.z0) / delta_y2y0;
   double x0, x1;
   double z0, z1;
   double dxdy_1;
   double dzdy_1;
 
-  dxdy_1 = (double)(v.x1 - v.x0) / (double)(v.y1 - v.y0);
-  dzdy_1 = (double)(v.z1 - v.z0) / (double)(v.y1 - v.y0);
+  dxdy_1 = (double)(v.x1 - v.x0) / delta_y1y0;
+  dzdy_1 = (double)(v.z1 - v.z0) / delta_y1y0;
 
-  double dredy = (r2 - r0) / (double)(v.y2 - v.y0);
-  double dgedy = (g2 - g0) / (double)(v.y2 - v.y0);
-  double dbedy = (b2 - b0) / (double)(v.y2 - v.y0);
+  double daedy = (a2 - a0) / delta_y2y0;
+  double dredy = (r2 - r0) / delta_y2y0;
+  double dgedy = (g2 - g0) / delta_y2y0;
+  double dbedy = (b2 - b0) / delta_y2y0;
 
-  double drdy_0 = (r1 - r0) / (double)(v.y1 - v.y0);
-  double dgdy_0 = (g1 - g0) / (double)(v.y1 - v.y0);
-  double dbdy_0 = (b1 - b0) / (double)(v.y1 - v.y0);
+  double dady_0 = (a1 - a0) / delta_y1y0;
+  double drdy_0 = (r1 - r0) / delta_y1y0;
+  double dgdy_0 = (g1 - g0) / delta_y1y0;
+  double dbdy_0 = (b1 - b0) / delta_y1y0;
 
+  double ae = a0;
   double re = r0;
   double ge = g0;
   double be = b0;
@@ -678,40 +706,45 @@ void Kohn3D::draw_triangle(
 
   for (int y0 = v.y0; y0 < v.y1; y0++)
   {
-    draw_line((int)x0 + x, y0 + y, (int)z0 + z, (int)x1 + x, y0 + y, (int)z1 + z, re, ge, be, r0, g0, b0);
+    draw_line((int)x0 + x, y0 + y, (int)z0 + z, (int)x1 + x, y0 + y, (int)z1 + z, ae, re, ge, be, a0, r0, g0, b0);
 
     x0 += dxdy_0;
     x1 += dxdy_1;
     z0 += dzdy_0;
     z1 += dzdy_1;
 
+    ae += daedy;
     re += dredy;
     ge += dgedy;
     be += dbedy;
+    a0 += dady_0;
     r0 += drdy_0;
     g0 += dgdy_0;
     b0 += dbdy_0;
   }
 
-  dxdy_1 = (double)(v.x2 - v.x1) / (double)(v.y2 - v.y1);
-  dzdy_1 = (double)(v.z2 - v.z1) / (double)(v.y2 - v.y1);
+  dxdy_1 = (double)(v.x2 - v.x1) / delta_y2y1;
+  dzdy_1 = (double)(v.z2 - v.z1) / delta_y2y1;
 
-  double drdy_1 = (r1 - r0) / (double)(v.y1 - v.y0);
-  double dgdy_1 = (g1 - g0) / (double)(v.y1 - v.y0);
-  double dbdy_1 = (b1 - b0) / (double)(v.y1 - v.y0);
+  double dady_1 = (a1 - a0) / delta_y1y0;
+  double drdy_1 = (r1 - r0) / delta_y1y0;
+  double dgdy_1 = (g1 - g0) / delta_y1y0;
+  double dbdy_1 = (b1 - b0) / delta_y1y0;
 
   for (int y0 = v.y1; y0 < v.y2; y0++)
   {
-    draw_line((int)x0 + x, y0 + y, (int)z0 + z, (int)x1 + x, y0 + y, (int)z1 + z, re, ge, be, r0, g0, b0);
+    draw_line((int)x0 + x, y0 + y, (int)z0 + z, (int)x1 + x, y0 + y, (int)z1 + z, ae, re, ge, be, a0, r0, g0, b0);
 
     x0 += dxdy_0;
     x1 += dxdy_1;
     z0 += dzdy_0;
     z1 += dzdy_1;
 
+    ae += daedy;
     re += dredy;
     ge += dgedy;
     be += dbedy;
+    a0 += dady_1;
     r0 += drdy_1;
     g0 += dgdy_1;
     b0 += dbdy_1;

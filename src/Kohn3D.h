@@ -49,6 +49,15 @@ public:
     image_writer->set_transparent_color_index(value);
   }
 
+  template <typename T>
+  void split_rgb(uint32_t color, T &a0, T &r0, T &g0, T &b0)
+  {
+    a0 = (color >> 24) & 0xff;
+    r0 = (color >> 16) & 0xff;
+    g0 = (color >> 8) & 0xff;
+    b0 =  color & 0xff;
+  }
+
   // Delay value is 100ths of a second.
   void set_delay(int value) { image_writer->set_delay(value); }
   void set_fps(int value) { image_writer->set_fps(value); }
@@ -94,6 +103,8 @@ public:
 
     if (is_32bit)
     {
+      if (do_alpha_blending) { color = calculate_alpha(color, pixel); }
+
       picture_32bit[pixel] = color;
     }
       else
@@ -106,7 +117,7 @@ public:
 
   void draw_line(int x0, int y0, int x1, int y1, uint32_t color);
   void draw_line(int x0, int y0, int z0, int x1, int y1, int z1, uint32_t color);
-  void draw_line(int x0, int y0, int z0, int x1, int y1, int z1, int r0, int g0, int b0, int r1, int b1, int g1);
+  void draw_line(int x0, int y0, int z0, int x1, int y1, int z1, int a0, int r0, int g0, int b0, int a1, int r1, int b1, int g1);
 
   void draw_rect(int x0, int y0, int x1, int y1, uint32_t color);
   void draw_rect(int x0, int y0, int x1, int y1, uint32_t color, int z);
