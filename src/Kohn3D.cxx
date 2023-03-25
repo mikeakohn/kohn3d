@@ -302,6 +302,7 @@ void Kohn3D::draw_line(
          (uint32_t)b;
 
       draw_pixel(x, y0, color, z);
+
       z += dz;
       a += da;
       r += dr;
@@ -346,6 +347,7 @@ void Kohn3D::draw_line(
          (uint32_t)b;
 
       draw_pixel(x0, y, color);
+
       z += dz;
       a += da;
       r += dr;
@@ -376,20 +378,29 @@ void Kohn3D::draw_line(
     double x = (double)x0;
 
     z = z0;
+    a = a0;
     r = r0;
     g = g0;
     b = b0;
     dz = (double)(z0 - z1) / dy;
+    da = (double)(a0 - a1) / dy;
     dr = (double)(r0 - r1) / dy;
     dg = (double)(g0 - g1) / dy;
     db = (double)(b0 - b1) / dy;
 
     for (int y = y0; y <= y1; y++)
     {
-      color = ((int)r << 16) | ((int)g << 8) | (int)b;
+      color =
+        ((uint32_t)a << 24) |
+        ((uint32_t)r << 16) |
+        ((uint32_t)g << 8) |
+         (uint32_t)b;
+
       draw_pixel((int)x, y, color, z);
+
       x += dxdy;
       z += dz;
+      a += da;
       r += dr;
       g += dg;
       b += db;
@@ -411,21 +422,30 @@ void Kohn3D::draw_line(
     double y = (double)y0;
 
     z = z0;
+    a = a0;
     r = r0;
     g = g0;
     b = b0;
     double dy = (double)(y0 - y1);
     dz = (double)(z0 - z1) / dy;
+    da = (double)(a0 - a1) / dy;
     dr = (double)(r0 - r1) / dy;
     dg = (double)(g0 - g1) / dy;
     db = (double)(b0 - b1) / dy;
 
     for (int x = x0; x <= x1; x++)
     {
-      color = ((int)r << 16) | ((int)g << 8) | (int)b;
+      color =
+        ((uint32_t)a << 24) |
+        ((uint32_t)r << 16) |
+        ((uint32_t)g << 8) |
+         (uint32_t)b;
+
       draw_pixel(x, (int)y, color, z);
+
       y += dydx;
       z += dz;
+      a += da;
       r += dr;
       g += dg;
       b += db;
