@@ -6,32 +6,12 @@ CFLAGS=-Wall -O3 -std=c++11 $(DEBUG)
 default:
 	@+make -C build
 
-.PHONY: samples
-samples:
-	$(CXX) -o draw_bars samples/draw_bars.cxx \
-	  -L. -lkohn3d -Isrc \
-	  $(CFLAGS)
-	$(CXX) -o draw_cube samples/draw_cube.cxx \
-	  -L. -lkohn3d -Isrc \
-	  $(CFLAGS)
-	$(CXX) -o draw_lines samples/draw_lines.cxx \
-	  -L. -lkohn3d -Isrc \
-	  $(CFLAGS)
-	$(CXX) -o draw_triangles samples/draw_triangles.cxx \
-	  -L. -lkohn3d -Isrc \
-	  $(CFLAGS)
-	$(CXX) -o draw_avi8 samples/draw_avi8.cxx \
-	  -L. -lkohn3d -Isrc \
-	  $(CFLAGS)
-	$(CXX) -o draw_avi24 samples/draw_avi24.cxx \
-	  -L. -lkohn3d -Isrc \
-	  $(CFLAGS)
-	$(CXX) -o draw_bmp8 samples/draw_bmp8.cxx \
-	  -L. -lkohn3d -Isrc \
-	  $(CFLAGS)
-	$(CXX) -o draw_bmp24 samples/draw_bmp24.cxx \
-	  -L. -lkohn3d -Isrc \
-	  $(CFLAGS)
+tools:
+	@+make -C build tools
+
+#.PHONY: samples
+samples: default
+	@+make -C samples
 
 clean:
 	cd python && make clean
