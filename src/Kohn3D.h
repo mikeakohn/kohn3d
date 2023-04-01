@@ -156,6 +156,7 @@ public:
 
   void draw_picture(Picture &picture, int x, int y, int z = INT32_MIN);
   void draw_picture(Picture &picture, int x, int y, int width, int height, int z = INT32_MIN);
+  void draw_picture_high_quality(Picture &picture, int x, int y, int width, int height, int z = INT32_MIN);
 
   void write_frame();
 

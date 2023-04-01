@@ -32,6 +32,15 @@ public:
   void update_alpha(uint8_t value);
   void update_alpha(uint8_t value, uint32_t ignore_color);
 
+  template <typename T>
+  void split_rgb(uint32_t color, T &a0, T &r0, T &g0, T &b0)
+  {
+    a0 = (color >> 24) & 0xff;
+    r0 = (color >> 16) & 0xff;
+    g0 = (color >> 8) & 0xff;
+    b0 =  color & 0xff;
+  }
+
   void set_data(uint32_t *value)
   {
     if (data != nullptr) { free(data); }
@@ -45,6 +54,8 @@ public:
 
     return data[(y * width) + x];
   }
+
+  uint32_t get_scaled_pixel(double u, double v, double w, double h);
 
   void set_pixel(int x, int y, uint32_t color)
   {
