@@ -113,6 +113,7 @@ void Picture::update_alpha(uint8_t value, uint32_t ignore_color)
 
 uint32_t Picture::get_scaled_pixel(double u, double v, double w, double h)
 {
+#if 0
   // If this maps into a single pixel, skip the code below and just
   // return the value at (u , v).
   if ((int)u == (int)(u + w) &&
@@ -120,6 +121,7 @@ uint32_t Picture::get_scaled_pixel(double u, double v, double w, double h)
   {
     return get_pixel((int)u, (int)v);
   }
+#endif
 
   double a_sum = 0;
   double r_sum = 0;

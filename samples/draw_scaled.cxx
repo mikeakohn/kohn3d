@@ -43,8 +43,7 @@ int main(int argc, char *argv[])
 #endif
 
     //kohn3d.enable_alpha_blending(true);
-    //kohn3d.draw_picture_high_quality(
-    kohn3d.draw_picture(
+    kohn3d.draw_picture_high_quality(
       picture_hello,
       hello_x,
       hello_y,
