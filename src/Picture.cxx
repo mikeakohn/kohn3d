@@ -39,6 +39,40 @@ int Picture::create(int width, int height)
   return 0;
 }
 
+int Picture::load(const char *filename)
+{
+  int type = 0;
+  char magic[3];
+  FILE *fp = fopen(filename, "rb");
+
+  if (fread(magic, 1, sizeof(magic), fp) == sizeof(magic))
+  {
+    if (memcmp(magic, "BM", 2) == 0)
+    {
+      type = 1;
+    }
+      else
+    if (memcmp(magic, "GIF", 3) == 0)
+    {
+      type = 2;
+    }
+  }
+
+  fclose(fp);
+
+  switch (type)
+  {
+    case 1:
+      return load_bmp(filename);
+      break;
+    case 2:
+      return load_gif(filename);
+      break;
+    default:
+      return -1;
+  }
+}
+
 int Picture::load_bmp(const char *filename)
 {
   ImageReaderBmp image_reader;

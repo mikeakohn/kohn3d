@@ -21,6 +21,7 @@ public:
   virtual ~Picture();
 
   int create(int width, int height);
+  int load(const char *filename);
   int load_bmp(const char *filename);
   int load_gif(const char *filename);
 

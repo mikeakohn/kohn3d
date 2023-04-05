@@ -14,9 +14,15 @@ int main(int argc, char *argv[])
   kohn3d.init_end();
 
   Picture picture_hello;
-  //picture_background.create(640, 480);
+  Picture picture_background;
 
-  if (picture_hello.load_gif("samples/assets/hello.gif") != 0)
+  if (picture_hello.load("samples/assets/hello.gif") != 0)
+  {
+    printf("Error loading hello GIF.\n");
+    exit(1);
+  }
+
+  if (picture_background.load("samples/assets/coins_640x408x24.bmp") != 0)
   {
     printf("Error loading hello GIF.\n");
     exit(1);
@@ -25,38 +31,95 @@ int main(int argc, char *argv[])
   //float bg_r = 0;
   //int alpha = 0xff;
   //int alpha_dx = -5;
-  int hello_width = 134 / 2;
-  int hello_height = 50 / 2;
-  int hello_x = (800 / 2) - (hello_width / 2);
-  int hello_y = (480 / 2) - (hello_height / 2);
 
-  for (float r = 0; r < 6.18 * 3; r += 6.18 / 120)
+  int x, y;
+  int width, height;
+
+  width = picture_hello.get_width() / 5;
+  height = picture_hello.get_height() / 5;
+  x = (800 / 2) - (width / 2);
+  y = (480 / 2) - (height / 2);
+
+  for (int i = 0; i < 150; i++)
   {
     kohn3d.clear();
 
-#if 0
-    picture_hello.update_alpha(alpha, 0x00000000);
-
-    alpha += alpha_dx;
-    if (alpha < 50) { alpha_dx = 5; }
-    if (alpha >= 255) { alpha_dx = -5; }
-#endif
-
-    //kohn3d.enable_alpha_blending(true);
     kohn3d.draw_picture_high_quality(
       picture_hello,
-      hello_x,
-      hello_y,
-      hello_width,
-      hello_height);
-    //kohn3d.enable_alpha_blending(false);
+      x,
+      y,
+      width,
+      height);
 
-    hello_x -= 2;
-    hello_y -= 2;
-    hello_width += 4;
-    hello_height += 4;
+    x -= 5;
+    y -= 5;
+    width += 10;
+    height += 10;
 
-    //bg_r += 0.1;
+    kohn3d.write_frame();
+  }
+
+  for (int i = 0; i < 150; i++)
+  {
+    kohn3d.clear();
+
+    kohn3d.draw_picture(
+      picture_hello,
+      x,
+      y,
+      width,
+      height);
+
+    x += 5;
+    y += 5;
+    width -= 10;
+    height -= 10;
+
+    kohn3d.write_frame();
+  }
+
+  double scale = 0.1;
+
+  for (int i = 0; i < 150; i++)
+  {
+    width = picture_background.get_width() * scale;
+    height = picture_background.get_height() * scale;
+
+    x = (800 / 2) - (width / 2);
+    y = (480 / 2) - (height / 2);
+
+    kohn3d.clear();
+
+    kohn3d.draw_picture_high_quality(
+      picture_background,
+      x,
+      y,
+      width,
+      height);
+
+    scale += 0.03;
+
+    kohn3d.write_frame();
+  }
+
+  for (int i = 0; i < 150; i++)
+  {
+    width = picture_background.get_width() * scale;
+    height = picture_background.get_height() * scale;
+
+    x = (800 / 2) - (width / 2);
+    y = (480 / 2) - (height / 2);
+
+    kohn3d.clear();
+
+    kohn3d.draw_picture(
+      picture_background,
+      x,
+      y,
+      width,
+      height);
+
+    scale -= 0.03;
 
     kohn3d.write_frame();
   }
