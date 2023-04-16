@@ -569,6 +569,9 @@ void Kohn3D::draw_triangle(
 {
   Triangle v = triangle;
 
+  translation(v, x, y, z);
+  projection(v);
+
   sort_vertexes(v);
 
   if (v.y0 == v.y1)
@@ -584,7 +587,7 @@ void Kohn3D::draw_triangle(
 
     for (int y0 = v.y0; y0 < v.y2; y0++)
     {
-      draw_line((int)x0 + x, y0 + y, (int)z0 + z, (int)x1 + x, y0 + y, (int)z1 + z, color);
+      draw_line((int)x0, y0, (int)z0, (int)x1, y0, (int)z1, color);
 
       x0 += dxdy_0;
       x1 += dxdy_1;
@@ -610,7 +613,7 @@ void Kohn3D::draw_triangle(
 
   for (int y0 = v.y0; y0 < v.y1; y0++)
   {
-    draw_line((int)x0 + x, y0 + y, (int)z0 + z, (int)x1 + x, y0 + y, (int)z1 + z, color);
+    draw_line((int)x0, y0, (int)z0, (int)x1, y0, (int)z1, color);
 
     x0 += dxdy_0;
     x1 += dxdy_1;
@@ -623,7 +626,7 @@ void Kohn3D::draw_triangle(
 
   for (int y0 = v.y1; y0 < v.y2; y0++)
   {
-    draw_line((int)x0 + x, y0 + y, (int)z0 + z, (int)x1 + x, y0 + y, (int)z1 + z, color);
+    draw_line((int)x0, y0, (int)z0, (int)x1, y0, (int)z1, color);
 
     x0 += dxdy_0;
     x1 += dxdy_1;
@@ -640,6 +643,9 @@ void Kohn3D::draw_triangle(
   uint32_t *colors)
 {
   Triangle v = triangle;
+
+  translation(v, x, y, z);
+  projection(v);
 
   sort_vertexes(v, colors);
 
@@ -677,7 +683,7 @@ void Kohn3D::draw_triangle(
 
     for (int y0 = v.y0; y0 < v.y2; y0++)
     {
-      draw_line((int)x0 + x, y0 + y, (int)z0 + z, (int)x1 + x, y0 + y, (int)z1 + z, a0, r0, g0, b0, a1, r1, g1, b1);
+      draw_line((int)x0, y0, (int)z0, (int)x1, y0, (int)z1, a0, r0, g0, b0, a1, r1, g1, b1);
 
       x0 += dxdy_0;
       x1 += dxdy_1;
@@ -726,7 +732,7 @@ void Kohn3D::draw_triangle(
 
   for (int y0 = v.y0; y0 < v.y1; y0++)
   {
-    draw_line((int)x0 + x, y0 + y, (int)z0 + z, (int)x1 + x, y0 + y, (int)z1 + z, ae, re, ge, be, a0, r0, g0, b0);
+    draw_line((int)x0, y0, (int)z0, (int)x1, y0, (int)z1, ae, re, ge, be, a0, r0, g0, b0);
 
     x0 += dxdy_0;
     x1 += dxdy_1;
@@ -753,7 +759,7 @@ void Kohn3D::draw_triangle(
 
   for (int y0 = v.y1; y0 < v.y2; y0++)
   {
-    draw_line((int)x0 + x, y0 + y, (int)z0 + z, (int)x1 + x, y0 + y, (int)z1 + z, ae, re, ge, be, a0, r0, g0, b0);
+    draw_line((int)x0, y0, (int)z0, (int)x1, y0, (int)z1, ae, re, ge, be, a0, r0, g0, b0);
 
     x0 += dxdy_0;
     x1 += dxdy_1;
@@ -1014,6 +1020,47 @@ void Kohn3D::rotate(int &x, int &y, int &z, const Rotation &rotation)
     t = (x * c) - (y * s);
     y = (x * s) + (y * c);
     x = t;
+  }
+}
+
+void Kohn3D::translation(Triangle &triangle, int x, int y, int z)
+{
+  triangle.x0 += x;
+  triangle.y0 += y;
+  triangle.z0 += z;
+  triangle.x1 += x;
+  triangle.y1 += y;
+  triangle.z1 += z;
+  triangle.x2 += x;
+  triangle.y2 += y;
+  triangle.z2 += z;
+}
+
+void Kohn3D::projection(Triangle &triangle)
+{
+  // Weak perspective projection.
+  //const double scale = -16738.0;
+  const double scale = -1024.0;
+
+  if (triangle.z0 != 0)
+  {
+    double z = triangle.z0 + scale;
+    triangle.x0 = scale * ((double)triangle.x0 / z);
+    triangle.y0 = scale * ((double)triangle.y0 / z);
+  }
+
+  if (triangle.z1 != 0)
+  {
+    double z = triangle.z1 + scale;
+    triangle.x1 = scale * ((double)triangle.x1 / z);
+    triangle.y1 = scale * ((double)triangle.y1 / z);
+  }
+
+  if (triangle.z2 != 0)
+  {
+    double z = triangle.z2 + scale;
+    triangle.x2 = scale * ((double)triangle.x2 / z);
+    triangle.y2 = scale * ((double)triangle.y2 / z);
   }
 }
 

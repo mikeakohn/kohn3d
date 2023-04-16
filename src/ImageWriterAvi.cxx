@@ -133,8 +133,10 @@ int ImageWriterAvi::add_frame(uint8_t *image, uint32_t *color_table)
 
   if (depth == 8)
   {
-    //for (y = height - 1; y >= 0; y--)
-    for (y = 0; y < height; y++)
+    // FIXME: mplayer seems to have a bug that displays uncompressed avi
+    // upside-down.
+    //for (y = 0; y < height; y++)
+    for (y = height - 1; y >= 0; y--)
     {
       for (x = 0; x < width; x++)
       {
@@ -148,8 +150,10 @@ int ImageWriterAvi::add_frame(uint8_t *image, uint32_t *color_table)
   {
     uint32_t *image32 = (uint32_t *)image;
 
-    //for (y = height - 1; y >= 0; y--)
-    for (y = 0; y < height; y++)
+    // FIXME: mplayer seems to have a bug that displays uncompressed avi
+    // upside-down.
+    //for (y = 0; y < height; y++)
+    for (y = height - 1; y >= 0; y--)
     {
       for (x = 0; x < width; x++)
       {

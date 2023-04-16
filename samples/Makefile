@@ -11,6 +11,7 @@ OBJECTS= \
   ../draw_bmp8 \
   ../draw_cube \
   ../draw_lines \
+  ../draw_projection \
   ../draw_scaled \
   ../draw_triangles
 

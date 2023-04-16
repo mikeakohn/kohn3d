@@ -173,6 +173,8 @@ private:
   void sort_vertexes(Triangle &triangle, uint32_t *colors);
   void rotate(Triangle &triangle, const Rotation &rotation);
   void rotate(int &x, int &y, int &z, const Rotation &rotation);
+  void translation(Triangle &triangle, int x, int y, int z);
+  void projection(Triangle &triangle);
   uint32_t calculate_alpha(uint32_t color, int pixel);
 
   bool do_alpha_blending;

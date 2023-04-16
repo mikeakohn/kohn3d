@@ -6,18 +6,22 @@
 
 int main(int argc, char *argv[])
 {
-  Kohn3D kohn3d(320, 240, Kohn3D::FORMAT_AVI24);
+  const int width = 800;
+  const int height = 480;
+  const int center_x = width / 2;
+  const int center_y = height / 2;
+
+  Kohn3D kohn3d(width, height, Kohn3D::FORMAT_AVI24);
 
   kohn3d.create("test.avi");
   kohn3d.clear();
   kohn3d.set_fps(30);
   kohn3d.init_end();
 
-  Picture picture_background;
+  Picture picture_coins;
   Picture picture_hello;
-  //picture_background.create(640, 480);
 
-  if (picture_background.load_bmp("samples/assets/coins_640x408x24.bmp") != 0)
+  if (picture_coins.load_bmp("samples/assets/coins_640x408x24.bmp") != 0)
   {
     printf("Error loading background BMP.\n");
     exit(1);
@@ -109,7 +113,7 @@ int main(int argc, char *argv[])
 #if 0
   for (int n = 0; n < 320; n++)
   {
-    picture_background.set_pixel(n, n, 0xffffff);
+    picture_coins.set_pixel(n, n, 0xffffff);
   }
 #endif
 
@@ -119,6 +123,11 @@ int main(int argc, char *argv[])
   int hello_width = 134 / 2;
   int hello_height = 50 / 2;
 
+  int coins_width = picture_coins.get_width() * 0.5;
+  int coins_height = picture_coins.get_height() * 0.5;
+  int coins_x = center_x - (coins_width / 2);
+  int coins_y = center_y - (coins_height / 2);
+
   for (float r = 0; r < 6.18 * 3; r += 6.18 / 120)
   {
     rotation.rz = r;
@@ -127,7 +136,13 @@ int main(int argc, char *argv[])
 
     kohn3d.clear();
 
-    kohn3d.draw_picture(picture_background, -100 + 50 * cos(bg_r), -100 + 50 * sin(bg_r));
+    kohn3d.draw_picture_high_quality(
+      picture_coins,
+      coins_x + 20 * cos(bg_r),
+      coins_y,
+      coins_width + 30 * cos(bg_r),
+      coins_height + 30 * cos(bg_r),
+      20 * cos(bg_r));
 
     picture_hello.update_alpha(alpha, 0x00000000);
 
@@ -137,7 +152,7 @@ int main(int argc, char *argv[])
 
     kohn3d.enable_alpha_blending(true);
     kohn3d.draw_picture(picture_hello, 50 + 50 * sin(bg_r), 180);
-    kohn3d.draw_picture(picture_hello, 160, 10, hello_width, hello_height);
+    kohn3d.draw_picture_high_quality(picture_hello, 160, 10, hello_width, hello_height);
     kohn3d.enable_alpha_blending(false);
 
     hello_width++;
@@ -145,9 +160,18 @@ int main(int argc, char *argv[])
 
     bg_r += 0.1;
 
+    int offset_x = 350 * cos(bg_r);
+    int offset_z = 200 * sin(bg_r);
+
     for (int n = 0; n < 12; n++)
     {
-      kohn3d.draw_triangle(triangles[n], rotation, 160, 120, 50, colors[n / 2]);
+      kohn3d.draw_triangle(
+        triangles[n],
+        rotation,
+        center_x + offset_x,
+        center_y,
+        offset_z,
+        colors[n / 2]);
     }
 
     kohn3d.write_frame();
