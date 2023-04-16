@@ -6,7 +6,7 @@ BMPs, avi, etc.
 
 Still in the beginning stages.
 
-https://www.mikekohn.net/
+https://www.mikekohn.net/software/kohn3d.php
 
 C++ API
 =======
@@ -145,8 +145,5 @@ TODO
 ====
 
 1. STL file reading.
-2. Projections.
-3. Scaled draw_picture().
-4. Textures in triangles.
-5. AVI files are upside down.
+2. Textures in triangles.
 
