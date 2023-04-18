@@ -20,6 +20,7 @@
 #include "ImageWriterGif.h"
 #include "ImageWriterAvi.h"
 #include "Picture.h"
+#include "Texture.h"
 
 class Kohn3D
 {
@@ -141,6 +142,7 @@ public:
   void draw_triangle(const Triangle &triangle, int x, int y, uint32_t color);
   void draw_triangle(const Triangle &triangle, int x, int y, int z, uint32_t color);
   void draw_triangle(const Triangle &triangle, int x, int y, int z, uint32_t *colors);
+  void draw_triangle(const Triangle &triangle, int x, int y, int z, Texture &texture);
 
   void draw_triangle(
     const Triangle &triangle,
@@ -153,6 +155,12 @@ public:
     const Rotation &rotation,
     int x, int y, int z,
     uint32_t *colors);
+
+  void draw_triangle(
+    const Triangle &triangle,
+    const Rotation &rotation,
+    int x, int y, int z,
+    Texture &texture);
 
   void draw_picture(Picture &picture, int x, int y, int z = INT32_MIN);
   void draw_picture(Picture &picture, int x, int y, int width, int height, int z = INT32_MIN);

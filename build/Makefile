@@ -14,7 +14,8 @@ OBJECTS= \
   ImageWriterBmp.o \
   ImageWriterGif.o \
   Kohn3D.o \
-  Picture.o
+  Picture.o \
+  Texture.o
 
 TOOLS= \
   ../parse_bmp \

@@ -3,6 +3,7 @@
 /*.gif
 /*.bmp
 *.avi
+*.mp4
 *.swp
 draw_bars
 draw_avi8
@@ -11,6 +12,8 @@ draw_bmp8
 draw_bmp24
 draw_cube
 draw_lines
+draw_projection
+draw_scaled
 draw_triangles
 parse_bmp
 parse_gif

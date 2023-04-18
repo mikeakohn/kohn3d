@@ -779,6 +779,82 @@ void Kohn3D::draw_triangle(
 
 void Kohn3D::draw_triangle(
   const Triangle &triangle,
+  int x,
+  int y,
+  int z,
+  Texture &texture)
+{
+  Triangle v = triangle;
+  uint32_t color = 0;
+
+  translation(v, x, y, z);
+  projection(v);
+
+  sort_vertexes(v);
+
+  if (v.y0 == v.y1)
+  {
+    double dxdy_0 = (double)(v.x2 - v.x0) / (double)(v.y2 - v.y0);
+    double dxdy_1 = (double)(v.x2 - v.x1) / (double)(v.y2 - v.y1);
+    double dzdy_0 = (double)(v.z2 - v.z0) / (double)(v.y2 - v.y0);
+    double dzdy_1 = (double)(v.z2 - v.z1) / (double)(v.y2 - v.y1);
+    double x0 = v.x0;
+    double x1 = v.x1;
+    double z0 = v.z0;
+    double z1 = v.z1;
+
+    for (int y0 = v.y0; y0 < v.y2; y0++)
+    {
+      draw_line((int)x0, y0, (int)z0, (int)x1, y0, (int)z1, color);
+
+      x0 += dxdy_0;
+      x1 += dxdy_1;
+      z0 += dzdy_0;
+      z1 += dzdy_1;
+    }
+
+    return;
+  }
+
+  double dxdy_0 = (double)(v.x2 - v.x0) / (double)(v.y2 - v.y0);
+  double dzdy_0 = (double)(v.z2 - v.z0) / (double)(v.y2 - v.y0);
+  double x0, x1;
+  double z0, z1;
+  double dxdy_1;
+  double dzdy_1;
+
+  dxdy_1 = (double)(v.x1 - v.x0) / (double)(v.y1 - v.y0);
+  dzdy_1 = (double)(v.z1 - v.z0) / (double)(v.y1 - v.y0);
+
+  x0 = x1 = v.x0;
+  z0 = z1 = v.z0;
+
+  for (int y0 = v.y0; y0 < v.y1; y0++)
+  {
+    draw_line((int)x0, y0, (int)z0, (int)x1, y0, (int)z1, color);
+
+    x0 += dxdy_0;
+    x1 += dxdy_1;
+    z0 += dzdy_0;
+    z1 += dzdy_1;
+  }
+
+  dxdy_1 = (double)(v.x2 - v.x1) / (double)(v.y2 - v.y1);
+  dzdy_1 = (double)(v.z2 - v.z1) / (double)(v.y2 - v.y1);
+
+  for (int y0 = v.y1; y0 < v.y2; y0++)
+  {
+    draw_line((int)x0, y0, (int)z0, (int)x1, y0, (int)z1, color);
+
+    x0 += dxdy_0;
+    x1 += dxdy_1;
+    z0 += dzdy_0;
+    z1 += dzdy_1;
+  }
+}
+
+void Kohn3D::draw_triangle(
+  const Triangle &triangle,
   const Rotation &rotation,
   int x,
   int y,
@@ -803,6 +879,20 @@ void Kohn3D::draw_triangle(
 
   rotate(v, rotation);
   draw_triangle(v, x, y, z, colors);
+}
+
+void Kohn3D::draw_triangle(
+  const Triangle &triangle,
+  const Rotation &rotation,
+  int x,
+  int y,
+  int z,
+  Texture &texture)
+{
+  Triangle v = triangle;
+
+  rotate(v, rotation);
+  draw_triangle(v, x, y, z, texture);
 }
 
 void Kohn3D::draw_picture(Picture &picture, int x0, int y0, int z)

@@ -17,8 +17,8 @@ int main(int argc, char *argv[])
   kohn3d.add_color(0x00ffff);
   kohn3d.add_color(0xffff00);
   kohn3d.set_bg_color_index(0);
-  kohn3d.set_delay(10);
-  kohn3d.set_loop_count(Kohn3D::LOOP_INFINITE);
+  //kohn3d.set_delay(10);
+  //kohn3d.set_loop_count(Kohn3D::LOOP_INFINITE);
   kohn3d.init_end();
 
   Kohn3D::Triangle triangles[12];
@@ -88,7 +88,7 @@ int main(int argc, char *argv[])
 
   Kohn3D::Rotation rotation;
 
-  for (float r = 0; r < 6.18; r += 6.18 / 30)
+  for (float r = 1.5; r < 6.18; r += 6.18 / 30)
   {
     rotation.rz = r;
     rotation.ry = r + 2;
@@ -102,6 +102,7 @@ int main(int argc, char *argv[])
     }
 
     kohn3d.write_frame();
+break;
   }
 
   kohn3d.finish();
