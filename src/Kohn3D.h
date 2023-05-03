@@ -125,6 +125,14 @@ public:
 
   struct Triangle
   {
+    void dump()
+    {
+      printf("(%d, %d, %d) | (%d, %d, %d) | (%d, %d, %d)\n",
+      x0, y0, z0,
+      x1, y1, z1,
+      x2, y2, z2);
+    }
+
     int x0, y0, z0;
     int x1, y1, z1;
     int x2, y2, z2;

@@ -13,6 +13,7 @@
 #define TEXTURE_H
 
 #include <stdint.h>
+#include <math.h>
 
 #include "Picture.h"
 
@@ -24,6 +25,7 @@ public:
 
   uint32_t get_pixel(double u, double v);
   int load(const char *filename);
+  void set_scale(int x0, int y0, int x1, int y1, int x2, int y2);
 
   struct
   {
@@ -33,6 +35,14 @@ public:
   } coords;
 
 private:
+  int compute_length(int a, int b)
+  {
+    return sqrt((a * a) + (b * b));
+  }
+
+  // (x1, y1) is the middle vertex where the angle is calculated.
+  float compute_angle(int x0, int y0, int x1, int y1, int x2, int y2);
+
   struct
   {
     double u0, v0;

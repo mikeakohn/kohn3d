@@ -13,6 +13,7 @@ OBJECTS= \
   ../draw_lines \
   ../draw_projection \
   ../draw_scaled \
+  ../draw_texture \
   ../draw_triangles
 
 default: $(OBJECTS)
