@@ -118,6 +118,7 @@ public:
 
   void draw_line(int x0, int y0, int x1, int y1, uint32_t color);
   void draw_line(int x0, int y0, int z0, int x1, int y1, int z1, uint32_t color);
+  void draw_line(int x0, int y0, int z0, int x1, int y1, int z1, Texture &texture);
   void draw_line(int x0, int y0, int z0, int x1, int y1, int z1, int a0, int r0, int g0, int b0, int a1, int r1, int b1, int g1);
 
   void draw_rect(int x0, int y0, int x1, int y1, uint32_t color);
@@ -187,6 +188,7 @@ private:
 
   void sort_vertexes(Triangle &triangle);
   void sort_vertexes(Triangle &triangle, uint32_t *colors);
+  void sort_vertexes(Triangle &triangle, Texture &texture);
   void rotate(Triangle &triangle, const Rotation &rotation);
   void rotate(int &x, int &y, int &z, const Rotation &rotation);
   void translation(Triangle &triangle, int x, int y, int z);

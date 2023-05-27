@@ -258,6 +258,106 @@ void Kohn3D::draw_line(
 void Kohn3D::draw_line(
   int x0, int y0, int z0,
   int x1, int y1, int z1,
+  Texture &texture)
+{
+  double dz, z;
+  uint32_t color;
+
+  if (y0 == y1)
+  {
+    if (x1 < x0)
+    {
+      exchange(x0, x1);
+      exchange(z0, z1);
+    }
+
+    z = z0;
+    dz = (double)(z1 - z0) / (double)(x1 - x0);
+
+    for (int x = x0; x <= x1; x++)
+    {
+      color = texture.get_color(x, y0);
+      draw_pixel(x, y0, color, z);
+      z += dz;
+    }
+
+    return;
+  }
+
+  if (x0 == x1)
+  {
+    if (x1 < x0)
+    {
+      exchange(y0, y1);
+      exchange(z0, z1);
+    }
+
+    z = z0;
+    dz = (double)(z1 - z0) / (double)(y1 - y0);
+
+    for (int y = y0; y <= y1; y++)
+    {
+      color = texture.get_color(x0, y);
+      draw_pixel(x0, y, color);
+      z += dz;
+    }
+
+    return;
+  }
+
+  int dx = (x0 - x1);
+  int dy = (y0 - y1);
+
+  if (abs(dx) < abs(dy))
+  {
+    if (y0 > y1)
+    {
+      exchange(x0, x1);
+      exchange(y0, y1);
+      exchange(z0, z1);
+    }
+
+    double dxdy = (double)(x0 - x1) / (double)(y0 - y1);
+    double x = (double)x0;
+
+    z = z0;
+    dz = (double)(z1 - z0) / (double)(y1 - y0);
+
+    for (int y = y0; y <= y1; y++)
+    {
+      color = texture.get_color(x, y);
+      draw_pixel((int)x, y, color, z);
+      x += dxdy;
+      z += dz;
+    }
+  }
+    else
+  {
+    if (x0 > x1)
+    {
+      exchange(x0, x1);
+      exchange(y0, y1);
+      exchange(z0, z1);
+    }
+
+    double dydx = (double)(y0 - y1) / (double)(x0 - x1);
+    double y = (double)y0;
+    z = z0;
+    dz = (double)(z1 - z0) / (double)(y1 - y0);
+
+    for (int x = x0; x <= x1; x++)
+    {
+      color = texture.get_color(x, y);
+      draw_pixel(x, (int)y, color, z);
+      y += dydx;
+      z += dz;
+    }
+  }
+}
+
+void Kohn3D::draw_line(
+  int x0, int y0, int z0,
+  int x1, int y1, int z1,
   int a0, int r0, int g0, int b0,
   int a1, int r1, int g1, int b1)
 {
@@ -785,12 +885,15 @@ void Kohn3D::draw_triangle(
   Texture &texture)
 {
   Triangle v = triangle;
-  uint32_t color = 0;
 
   translation(v, x, y, z);
   projection(v);
 
-  sort_vertexes(v);
+  sort_vertexes(v, texture);
+  texture.set_scale(
+    triangle.x0, triangle.y0,
+    triangle.x1, triangle.y1,
+    triangle.x2, triangle.y2);
 
   if (v.y0 == v.y1)
   {
@@ -805,7 +908,7 @@ void Kohn3D::draw_triangle(
 
     for (int y0 = v.y0; y0 < v.y2; y0++)
     {
-      draw_line((int)x0, y0, (int)z0, (int)x1, y0, (int)z1, color);
+      draw_line((int)x0, y0, (int)z0, (int)x1, y0, (int)z1, texture);
 
       x0 += dxdy_0;
       x1 += dxdy_1;
@@ -831,7 +934,7 @@ void Kohn3D::draw_triangle(
 
   for (int y0 = v.y0; y0 < v.y1; y0++)
   {
-    draw_line((int)x0, y0, (int)z0, (int)x1, y0, (int)z1, color);
+    draw_line((int)x0, y0, (int)z0, (int)x1, y0, (int)z1, texture);
 
     x0 += dxdy_0;
     x1 += dxdy_1;
@@ -844,7 +947,7 @@ void Kohn3D::draw_triangle(
 
   for (int y0 = v.y1; y0 < v.y2; y0++)
   {
-    draw_line((int)x0, y0, (int)z0, (int)x1, y0, (int)z1, color);
+    draw_line((int)x0, y0, (int)z0, (int)x1, y0, (int)z1, texture);
 
     x0 += dxdy_0;
     x1 += dxdy_1;
@@ -1058,6 +1161,36 @@ void Kohn3D::sort_vertexes(Triangle &triangle, uint32_t *colors)
     exchange(triangle.y0, triangle.y1);
     exchange(triangle.z0, triangle.z1);
     exchange(colors[0], colors[1]);
+  }
+}
+
+void Kohn3D::sort_vertexes(Triangle &triangle, Texture &texture)
+{
+  texture.reset_sort();
+
+  // Sort vertexes to y0 is top, y1 is middle, and y2 is bottom.
+  if (triangle.y0 > triangle.y1)
+  {
+    exchange(triangle.x0, triangle.x1);
+    exchange(triangle.y0, triangle.y1);
+    exchange(triangle.z0, triangle.z1);
+    texture.exchange(0, 1);
+  }
+
+  if (triangle.y1 > triangle.y2)
+  {
+    exchange(triangle.x1, triangle.x2);
+    exchange(triangle.y1, triangle.y2);
+    exchange(triangle.z1, triangle.z2);
+    texture.exchange(1, 2);
+  }
+
+  if (triangle.y0 > triangle.y1)
+  {
+    exchange(triangle.x0, triangle.x1);
+    exchange(triangle.y0, triangle.y1);
+    exchange(triangle.z0, triangle.z1);
+    texture.exchange(0, 1);
   }
 }
 

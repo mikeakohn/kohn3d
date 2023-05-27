@@ -43,6 +43,7 @@ int main(int argc, char *argv[])
   triangle.y2 =  60;
   triangle.z2 =  0;
 
+#if 0
   texture_coins.set_scale(
     triangle.x0,
     triangle.y0,
@@ -50,6 +51,7 @@ int main(int argc, char *argv[])
     triangle.y1,
     triangle.x2,
     triangle.y2);
+#endif
 
   Kohn3D::Rotation rotation;
 
@@ -71,13 +73,15 @@ int main(int argc, char *argv[])
 
     //bg_r += 0.1;
 
+    texture_hello.set_coords(0.0, 0.0,  0.0, 1.0,  1.0, 1.0);
+
     kohn3d.draw_triangle(
       triangle,
       rotation,
       300,
       300,
       0,
-      0xff0000);
+      texture_hello);
 
     kohn3d.write_frame();
   }
