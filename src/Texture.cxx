@@ -70,11 +70,11 @@ void Texture::set_scale(int x0, int y0, int x1, int y1, int x2, int y2)
   side_1_xy = compute_length(x1 - x2, y1 - y2);
 
   side_0_uv = compute_length(
-    (picture.get_width() * sorted.u[1]) - (picture.get_width() * sorted.u[0]),
+    (picture.get_width()  * sorted.u[1]) - (picture.get_width()  * sorted.u[0]),
     (picture.get_height() * sorted.v[1]) - (picture.get_height() * sorted.v[0]));
 
   side_1_uv = compute_length(
-    (picture.get_width() * sorted.u[1]) - (picture.get_width() * sorted.u[2]),
+    (picture.get_width()  * sorted.u[1]) - (picture.get_width()  * sorted.u[2]),
     (picture.get_height() * sorted.v[1]) - (picture.get_height() * sorted.v[2]));
 
   side_0_scale = side_0_xy / side_0_uv;

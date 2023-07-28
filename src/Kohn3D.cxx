@@ -19,13 +19,13 @@
 
 Kohn3D::Kohn3D(int width, int height, Format format) :
   do_alpha_blending { false },
-  is_32bit { false },
-  width { width },
-  height { height },
-  color_count { 0 },
-  format { format },
-  picture_32bit { nullptr },
-  image_writer { nullptr }
+  is_32bit          { false },
+  width             { width },
+  height            { height },
+  color_count       { 0 },
+  format            { format },
+  picture_32bit     { nullptr },
+  image_writer      { nullptr }
 {
   switch (format)
   {
@@ -50,7 +50,7 @@ Kohn3D::Kohn3D(int width, int height, Format format) :
       break;
   }
 
-  picture = (uint8_t *)malloc(width * height * sizeof(uint32_t));
+  picture  = (uint8_t *)malloc(width * height * sizeof(uint32_t));
   z_buffer = (int16_t *)malloc(width * height * sizeof(int16_t));
 
   if (is_32bit) { picture_32bit = (uint32_t *)picture; }
@@ -121,8 +121,8 @@ void Kohn3D::draw_line(int x0, int y0, int x1, int y1, uint32_t color)
     return;
   }
 
-  int dx = (x0 - x1);
-  int dy = (y0 - y1);
+  int dx = x0 - x1;
+  int dy = y0 - y1;
 
   if (abs(dx) < abs(dy))
   {
