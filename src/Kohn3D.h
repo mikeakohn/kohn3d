@@ -2,7 +2,7 @@
 
   Kohn3D - GIF drawing library.
 
-  Copyright 2023 - Michael Kohn (mike@mikekohn.net)
+  Copyright 2023-2025 - Michael Kohn (mike@mikekohn.net)
   https://www.mikekohn.net/
 
   This code falls under the LGPL license.
@@ -199,7 +199,7 @@ private:
   bool is_32bit;
   int width, height;
   int color_count;
-  int format;
+  //int format;
   uint8_t *picture;
   uint32_t *picture_32bit;
   int16_t *z_buffer;

@@ -2,7 +2,7 @@
 
   Kohn3D - GIF drawing library.
 
-  Copyright 2023 - Michael Kohn (mike@mikekohn.net)
+  Copyright 2023-2025 - Michael Kohn (mike@mikekohn.net)
   https://www.mikekohn.net/
 
   This code falls under the LGPL license.
@@ -23,7 +23,7 @@ Kohn3D::Kohn3D(int width, int height, Format format) :
   width             { width },
   height            { height },
   color_count       { 0 },
-  format            { format },
+  //format            { format },
   picture_32bit     { nullptr },
   image_writer      { nullptr }
 {

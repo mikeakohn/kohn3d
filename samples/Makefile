@@ -14,7 +14,8 @@ OBJECTS= \
   ../draw_projection \
   ../draw_scaled \
   ../draw_texture \
-  ../draw_triangles
+  ../draw_triangles \
+  ../simple_texture
 
 default: $(OBJECTS)
 

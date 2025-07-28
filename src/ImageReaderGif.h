@@ -2,7 +2,7 @@
 
   Kohn3D - GIF drawing library.
 
-  Copyright 2023 - Michael Kohn (mike@mikekohn.net)
+  Copyright 2023-2025 - Michael Kohn (mike@mikekohn.net)
   https://www.mikekohn.net/
 
   This code falls under the LGPL license.
@@ -35,7 +35,7 @@ private:
     uint8_t aspect_ratio;
   } header;
 
-  uint32_t global_color_table[256];
+  //uint32_t global_color_table[256];
 
   struct ImageDescriptor
   {
