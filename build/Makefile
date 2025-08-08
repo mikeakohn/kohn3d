@@ -14,6 +14,7 @@ OBJECTS= \
   ImageWriterBmp.o \
   ImageWriterGif.o \
   Kohn3D.o \
+  PolarCoords.o \
   Picture.o \
   Texture.o
 

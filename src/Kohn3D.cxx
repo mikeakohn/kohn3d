@@ -890,6 +890,7 @@ void Kohn3D::draw_triangle(
   projection(v);
 
   sort_vertexes(v, texture);
+
   texture.set_scale(
     triangle.x0, triangle.y0,
     triangle.x1, triangle.y1,
