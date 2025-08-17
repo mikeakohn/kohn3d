@@ -278,7 +278,7 @@ void Kohn3D::draw_line(
 
     for (int x = x0; x <= x1; x++)
     {
-      color = texture.get_color(x, y0);
+      color = texture.get_pixel(x, y0);
       draw_pixel(x, y0, color, z);
       z += dz;
     }
@@ -299,7 +299,7 @@ void Kohn3D::draw_line(
 
     for (int y = y0; y <= y1; y++)
     {
-      color = texture.get_color(x0, y);
+      color = texture.get_pixel(x0, y);
       draw_pixel(x0, y, color);
       z += dz;
     }
@@ -327,7 +327,7 @@ void Kohn3D::draw_line(
 
     for (int y = y0; y <= y1; y++)
     {
-      color = texture.get_color(x, y);
+      color = texture.get_pixel(x, y);
       draw_pixel((int)x, y, color, z);
       x += dxdy;
       z += dz;
@@ -349,7 +349,7 @@ void Kohn3D::draw_line(
 
     for (int x = x0; x <= x1; x++)
     {
-      color = texture.get_color(x, y);
+      color = texture.get_pixel(x, y);
       draw_pixel(x, (int)y, color, z);
       y += dydx;
       z += dz;
