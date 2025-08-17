@@ -25,10 +25,11 @@ public:
   virtual ~Texture();
 
   int load(const char *filename);
-  void set_scale(int x0, int y0, int x1, int y1, int x2, int y2);
+  //void set_scale(int x0, int y0, int x1, int y1, int x2, int y2);
+  void set_scale(const PolarCoords &a, const PolarCoords &b);
 
   uint32_t get_pixel(double angle, int r);
-  uint32_t get_color(int x, int y);
+  uint32_t get_pixel(int x, int y);
 
   void compute_scale(double angle, int length_a, int length_b);
 
@@ -171,6 +172,7 @@ private:
   //double compute_angle(int x0, int y0, int x1, int y1, int x2, int y2);
 
   int compute_length_at(double p, double p0, double p1, int r0, int r1);
+  int compute_length_at(double p);
 
   struct
   {
@@ -181,27 +183,10 @@ private:
     int x2, y2;
   } sorted;
 
-#if 0
-  float angle_xy_0;
-  float angle_xy_1;
-  float angle_uv;
-  float angle_uv_0;
-  float angle_uv_1;
-#endif
-  int side_0_xy;
-  int side_0_uv;
-  int side_1_xy;
-  int side_1_uv;
-  int center_uv_x;
-  int center_uv_y;
-
   double angle_xy;
-  int length_a;
-  int length_b;
+  //int length_a;
+  //int length_b;
 
-  //double angle_scale;
-  //double side_0_scale;
-  //double side_1_scale;
   double scale_angle;
   double scale_a;
   double scale_b;
@@ -212,8 +197,6 @@ private:
   PolarCoords polar_a;
   PolarCoords polar_b;
 
-  // New code.
-  // (x1, y1) is vertex.
   AreaXY area;
   AreaUV coords_uv;
 

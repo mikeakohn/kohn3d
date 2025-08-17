@@ -118,7 +118,7 @@ public:
 
   void draw_line(int x0, int y0, int x1, int y1, uint32_t color);
   void draw_line(int x0, int y0, int z0, int x1, int y1, int z1, uint32_t color);
-  void draw_line(int x0, int y0, int z0, int x1, int y1, int z1, Texture &texture);
+  void draw_line(int x0, int y0, int z0, int x1, int y1, int z1, Texture &texture, int center_x, int center_y);
   void draw_line(int x0, int y0, int z0, int x1, int y1, int z1, int a0, int r0, int g0, int b0, int a1, int r1, int b1, int g1);
 
   void draw_rect(int x0, int y0, int x1, int y1, uint32_t color);

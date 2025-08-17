@@ -16,6 +16,7 @@
 #include <math.h>
 
 #include "Kohn3D.h"
+#include "PolarCoords.h"
 
 Kohn3D::Kohn3D(int width, int height, Format format) :
   do_alpha_blending { false },
@@ -258,7 +259,8 @@ void Kohn3D::draw_line(
 void Kohn3D::draw_line(
   int x0, int y0, int z0,
   int x1, int y1, int z1,
-  Texture &texture)
+  Texture &texture,
+  int center_x, int center_y)
 {
   double dz, z;
   uint32_t color;
@@ -889,12 +891,18 @@ void Kohn3D::draw_triangle(
   translation(v, x, y, z);
   projection(v);
 
+  PolarCoords polar_a;
+  PolarCoords polar_b;
+
+  polar_a.from_xy(v.x1 - v.x0, v.y1 - v.y0);
+  polar_a.from_xy(v.x1 - v.x2, v.y1 - v.y2);
+
+  int center_x = v.x1;
+  int center_y = v.y1;
+
   sort_vertexes(v, texture);
 
-  texture.set_scale(
-    triangle.x0, triangle.y0,
-    triangle.x1, triangle.y1,
-    triangle.x2, triangle.y2);
+  texture.set_scale(polar_a, polar_b);
 
   if (v.y0 == v.y1)
   {
@@ -909,7 +917,10 @@ void Kohn3D::draw_triangle(
 
     for (int y0 = v.y0; y0 < v.y2; y0++)
     {
-      draw_line((int)x0, y0, (int)z0, (int)x1, y0, (int)z1, texture);
+      draw_line(
+        (int)x0, y0, (int)z0,
+        (int)x1, y0, (int)z1,
+        texture, center_x, center_y);
 
       x0 += dxdy_0;
       x1 += dxdy_1;
@@ -935,7 +946,10 @@ void Kohn3D::draw_triangle(
 
   for (int y0 = v.y0; y0 < v.y1; y0++)
   {
-    draw_line((int)x0, y0, (int)z0, (int)x1, y0, (int)z1, texture);
+    draw_line(
+      (int)x0, y0, (int)z0,
+      (int)x1, y0, (int)z1,
+      texture, center_x, center_y);
 
     x0 += dxdy_0;
     x1 += dxdy_1;
@@ -948,7 +962,10 @@ void Kohn3D::draw_triangle(
 
   for (int y0 = v.y1; y0 < v.y2; y0++)
   {
-    draw_line((int)x0, y0, (int)z0, (int)x1, y0, (int)z1, texture);
+    draw_line(
+      (int)x0, y0, (int)z0,
+      (int)x1, y0, (int)z1,
+      texture, center_x, center_y);
 
     x0 += dxdy_0;
     x1 += dxdy_1;
