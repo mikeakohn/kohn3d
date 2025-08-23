@@ -278,7 +278,13 @@ void Kohn3D::draw_line(
 
     for (int x = x0; x <= x1; x++)
     {
-      color = texture.get_pixel(x, y0);
+      double p;
+      int r;
+
+      PolarCoords::from_xy(p, r, center_x - x, center_y - y0);
+
+      //color = texture.get_pixel(x, y0);
+      color = texture.get_pixel(p, r);
       draw_pixel(x, y0, color, z);
       z += dz;
     }
@@ -299,7 +305,13 @@ void Kohn3D::draw_line(
 
     for (int y = y0; y <= y1; y++)
     {
-      color = texture.get_pixel(x0, y);
+      double p;
+      int r;
+
+      PolarCoords::from_xy(p, r, center_x - x0, center_y - y);
+
+      //color = texture.get_pixel(x0, y);
+      color = texture.get_pixel(p, r);
       draw_pixel(x0, y, color);
       z += dz;
     }
@@ -327,7 +339,13 @@ void Kohn3D::draw_line(
 
     for (int y = y0; y <= y1; y++)
     {
-      color = texture.get_pixel(x, y);
+      double p;
+      int r;
+
+      PolarCoords::from_xy(p, r, center_x - x, center_y - y);
+
+      //color = texture.get_pixel(x, y);
+      color = texture.get_pixel(p, r);
       draw_pixel((int)x, y, color, z);
       x += dxdy;
       z += dz;
@@ -349,7 +367,13 @@ void Kohn3D::draw_line(
 
     for (int x = x0; x <= x1; x++)
     {
-      color = texture.get_pixel(x, y);
+      double p;
+      int r;
+
+      PolarCoords::from_xy(p, r, center_x - x, center_y - y);
+
+      //color = texture.get_pixel(x, y);
+      color = texture.get_pixel(p, r);
       draw_pixel(x, (int)y, color, z);
       y += dydx;
       z += dz;
@@ -1127,6 +1151,12 @@ void Kohn3D::draw_picture_high_quality(
 void Kohn3D::write_frame()
 {
   image_writer->add_frame(picture, palette);
+}
+
+void Kohn3D::dump()
+{
+  printf(" -- Kohn3D --\n");
+  printf("width=%d height=%d\n", width, height);
 }
 
 void Kohn3D::sort_vertexes(Triangle &triangle)

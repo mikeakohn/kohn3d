@@ -177,6 +177,8 @@ public:
 
   void write_frame();
 
+  void dump();
+
 private:
   template<typename T> void exchange(T &a, T &b)
   {
