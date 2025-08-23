@@ -19,7 +19,7 @@ OBJECTS= \
 
 default: $(OBJECTS)
 
-../%: %.cxx
+../%: %.cpp
 	$(CXX) -o $@ $< \
 	  -L.. -lkohn3d -Isrc -I../src \
 	  $(CFLAGS)

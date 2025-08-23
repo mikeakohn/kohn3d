@@ -31,7 +31,7 @@ old:
 	$(CC) -o ../parse_gif ../src/parse_gif.c -Wall -O3 $(DEBUG)
 	$(CC) -o ../parse_bmp ../src/parse_bmp.c -Wall -O3 $(DEBUG)
 
-%.o: %.cxx %.h
+%.o: %.cpp %.h
 	$(CXX) -c $< -o $*.o \
 	  $(CFLAGS) -fPIC
 

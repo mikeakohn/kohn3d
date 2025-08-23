@@ -20,5 +20,6 @@ clean:
 	@rm -f draw_bars draw_cube draw_lines draw_texture draw_triangles
 	@rm -f draw_bmp8 draw_bmp24 draw_projection draw_scaled
 	@rm -f draw_avi8 draw_avi24
+	@rm -f simple_texture
 	@echo "Clean!"
 

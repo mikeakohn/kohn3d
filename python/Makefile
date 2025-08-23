@@ -8,7 +8,7 @@ OBJECTS= \
   ../build/Kohn3D.o
 
 default:
-	$(CXX) -o kohn3d.so kohn3d.cxx \
+	$(CXX) -o kohn3d.so kohn3d.cpp \
 	  $(OBJECTS) \
 	  -shared -fPIC $(CFLAGS) $(INCLUDES)
 
