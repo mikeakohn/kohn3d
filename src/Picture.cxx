@@ -45,6 +45,11 @@ int Picture::load(const char *filename)
   char magic[3];
   FILE *fp = fopen(filename, "rb");
 
+  if (fp == NULL)
+  {
+    return -2;
+  }
+
   if (fread(magic, 1, sizeof(magic), fp) == sizeof(magic))
   {
     if (memcmp(magic, "BM", 2) == 0)
