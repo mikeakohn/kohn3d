@@ -44,12 +44,16 @@ void Texture::set_scale(const PolarCoords &a, const PolarCoords &b)
 
 uint32_t Texture::get_pixel(double angle, int r)
 {
-  angle = angle * scale_angle;
-
-  int scaled_r = compute_length_at(angle);
+  //angle = angle * scale_angle;
+  //int scaled_r = compute_length_at(angle);
   int x, y;
 
+int scaled_r = r;
+
   PolarCoords::to_xy(x, y, polar_a.p + angle, scaled_r);
+
+//printf("angle=%f r=%d scaled_r=%d\n", polar_a.p + angle, r, scaled_r);
+//printf("(%d, %d)   (%d, %d)\n", center_x, center_y, center_x + x, center_y + y);
 
   return picture.get_pixel(center_x + x, center_y + y);
 }

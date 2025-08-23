@@ -17,13 +17,13 @@ int main(int argc, char *argv[])
 
   Texture texture_hello;
 
-  if (texture_hello.load("samples/assets/hello.gif") != 0)
+  if (texture_hello.load("samples/assets/colors.bmp") != 0)
   {
     printf("Error loading hello GIF.\n");
     exit(1);
   }
 
-  for (int i = 1; i < height; i++) { kohn3d.draw_line(0, 0, i, i, 0xff0000); }
+  //for (int i = 1; i < height; i++) { kohn3d.draw_line(0, 0, i, i, 0xff0000); }
 
   Kohn3D::Triangle triangle;
 
