@@ -15,7 +15,8 @@ OBJECTS= \
   ../draw_scaled \
   ../draw_texture \
   ../draw_triangles \
-  ../simple_texture
+  ../simple_texture \
+  ../test_polar_coords
 
 default: $(OBJECTS)
 

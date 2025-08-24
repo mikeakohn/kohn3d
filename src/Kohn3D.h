@@ -93,6 +93,15 @@ public:
     }
   }
 
+  void draw_pixel(const PolarCoords &coords, uint32_t color)
+  {
+    int x, y;
+
+    coords.to_xy_centered(x, y);
+
+    draw_pixel(x, y, color);
+  }
+
   void draw_pixel(int x, int y, uint32_t color, int z)
   {
     if (x < 0 || x >= width) { return; }

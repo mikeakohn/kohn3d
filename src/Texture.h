@@ -124,6 +124,7 @@ private:
     y = r * sin(a);
   }
 
+#if 0
   void cartesian_to_polar(float &a, int &r, int x, int y)
   {
     // r = sqrt(x ^ 2 + y ^2);
@@ -150,23 +151,24 @@ private:
     if (x > 0 && y < 0)
     {
       // atan(-1 / 4) will come out negative.
-      a = 6.28 + atan(y / x);
+      a = (M_PI * 2) + atan(y / x);
     }
       else
     if (x < 0 && y < 0)
     {
-      a = 3.14 + atan(y / x);
+      a = M_PI + atan(y / x);
     }
       else
     if (x < 0 && y > 0)
     {
-      a = 3.14 + atan(y / x);
+      a = M_PI + atan(y / x);
     }
       else
     {
       a = atan(y / x);
     }
   }
+#endif
 
   // (x1, y1) is the middle vertex where the angle is calculated.
   //double compute_angle(int x0, int y0, int x1, int y1, int x2, int y2);
