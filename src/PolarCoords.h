@@ -95,6 +95,8 @@ public:
     return (d * (2 * M_PI)) / 360;
   }
 
+  void dump();
+
   double p;
   int r;
 

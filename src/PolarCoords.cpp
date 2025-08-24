@@ -14,13 +14,10 @@
 
 #include "PolarCoords.h"
 
-// double atan2(double y, double x);
-
-#if 0
-void FromXY(double &angle, int r, const int x, const int y)
+void PolarCoords::dump()
 {
-  r = (int)sqrt((float)((x * x) + (y * y)));
-  angle = atan2(y, x);
+  printf(" -- PolarCoords --\n");
+  printf("  p=[ %.2f %.2f ]  r=%d\n", p, get_degrees(), r);
+  printf("  center=(%d, %d)\n\n", center_x, center_y);
 }
-#endif
 
