@@ -1,0 +1,101 @@
+/*
+
+  Kohn3D - GIF drawing library.
+
+  Copyright 2023-2025 - Michael Kohn (mike@mikekohn.net)
+  https://www.mikekohn.net/
+
+  This code falls under the LGPL license.
+
+*/
+
+#ifndef ANGLE_H
+#define ANGLE_H
+
+#include <stdint.h>
+#include <math.h>
+
+#include "PolarCoords.h"
+
+class Angle
+{
+public:
+  Angle() :
+    scale_p  { 0.0 },
+    scale_r0 { 0.0 },
+    scale_r1 { 0.0 }
+  {
+  }
+
+  virtual ~Angle() { }
+
+  void set_center(int x, int y)
+  {
+    coords_0.set_center(x, y);
+    coords_1.set_center(x, y);
+  }
+
+  void set_from_xy(const int x0, const int y0, const int x1, const int y1)
+  {
+    coords_0.from_xy_centered(x0, y0);
+    coords_1.from_xy_centered(x1, y1);
+
+    //ratio_r = (float)coords_0.r / (float)coords_1.r;
+    //length_p = fabs(coords_0.p - coords_1.p);
+    delta_r = coords_1.r - coords_0.r;
+    delta_p = coords_1.p - coords_0.p;
+  }
+
+  double get_radians_0()
+  {
+    return coords_0.get_radians();
+  }
+
+  double get_radians_1()
+  {
+    return coords_1.get_radians();
+  }
+
+  double get_degrees_0()
+  {
+    return coords_0.get_degrees();
+  }
+
+  double get_degrees_1()
+  {
+    return coords_1.get_degrees();
+  }
+
+  int compute_length_at(double p)
+  {
+    double dp = p - coords_0.p;
+    double r = delta_r * (dp / delta_p);
+
+    return coords_0.r + r;
+  }
+
+  int compute_length_at_degrees(double p)
+  {
+    return compute_length_at(PolarCoords::to_radians(p));
+  }
+
+  void dump();
+
+  PolarCoords coords_0;
+  PolarCoords coords_1;
+
+private:
+  //int center_x, center_y;
+  double scale_p;
+  double scale_r0;
+  double scale_r1;
+
+  //double ratio_r;
+  //double length_p;
+  double delta_p;
+  double delta_r;
+
+};
+
+#endif
+

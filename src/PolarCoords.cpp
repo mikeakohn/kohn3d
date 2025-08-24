@@ -18,6 +18,6 @@ void PolarCoords::dump()
 {
   printf(" -- PolarCoords --\n");
   printf("  p=[ %.2f %.2f ]  r=%d\n", p, get_degrees(), r);
-  printf("  center=(%d, %d)\n\n", center_x, center_y);
+  printf("  center=(%d, %d)\n", center_x, center_y);
 }
 

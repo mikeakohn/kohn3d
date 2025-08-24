@@ -32,6 +32,9 @@ public:
     center_y = y;
   }
 
+  int get_center_x() const { return center_x; }
+  int get_center_y() const { return center_y; }
+
   void set_angle(double value) { p = value; }
   void set_radius(int value)   { r = value; }
 
@@ -88,6 +91,8 @@ public:
   }
 
   double get_degrees() { return to_degrees(p); }
+
+  double get_radians() { return p; }
 
   static double to_radians(double d)
   {

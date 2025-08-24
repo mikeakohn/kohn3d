@@ -161,6 +161,18 @@ void Kohn3D::draw_line(int x0, int y0, int x1, int y1, uint32_t color)
   }
 }
 
+void Kohn3D::draw_line(const PolarCoords &coords, uint32_t color)
+{
+  int x1, y1;
+
+  int x0 = coords.get_center_x();
+  int y0 = coords.get_center_y();
+
+  coords.to_xy_centered(x1, y1);
+
+  draw_line(x0, y0, x1, y1, color);
+}
+
 void Kohn3D::draw_line(
   int x0, int y0, int z0,
   int x1, int y1, int z1,

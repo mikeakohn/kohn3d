@@ -3,6 +3,8 @@
 #include <math.h>
 
 #include "Kohn3D.h"
+#include "Angle.h"
+#include "PolarCoords.h"
 
 int main(int argc, char *argv[])
 {
@@ -26,8 +28,9 @@ int main(int argc, char *argv[])
   PolarCoords coords;
 
   const int length = 80;
-  const int center_x = width / 4;
-  const int center_y = height / 4;
+
+  int center_x = width / 4;
+  int center_y = height / 4;
 
   coords.set_center(center_x, center_y);
   coords.set_radius(length);
@@ -93,6 +96,30 @@ int main(int argc, char *argv[])
   y = center_y;
   coords.from_xy_centered(p, r, x, y);
   printf("%f %f, %d -> (%d, %d)\n", p, PolarCoords::to_degrees(p), r, x, y);
+
+  Angle angle;
+
+  center_x = width - center_x;
+
+  angle.set_center(center_x, center_y);
+  angle.set_from_xy(center_x, center_y - 80, center_x + 80, center_y);
+
+  angle.dump();
+
+  kohn3d.draw_line(angle.coords_0, 0x00ff00);
+  kohn3d.draw_line(angle.coords_1, 0x0000ff);
+
+  coords.set_center(center_x, center_y);
+
+  for (double p = angle.get_degrees_0(); p < angle.get_degrees_1(); p += 0.1)
+  {
+    int r = angle.compute_length_at_degrees(p);
+
+    coords.set_angle_degrees(p);
+    coords.r = r;
+
+    kohn3d.draw_pixel(coords, 0xff0000);
+  }
 
   kohn3d.write_frame();
   kohn3d.finish();

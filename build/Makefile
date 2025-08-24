@@ -6,6 +6,7 @@ CFLAGS=-Wall -O3 -std=c++11 $(DEBUG) $(INCLUDES)
 VPATH=../src
 
 OBJECTS= \
+  Angle.o \
   ImageReader.o \
   ImageReaderBmp.o \
   ImageReaderGif.o \
