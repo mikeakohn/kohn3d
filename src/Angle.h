@@ -23,7 +23,9 @@ public:
   Angle() :
     scale_p  { 0.0 },
     scale_r0 { 0.0 },
-    scale_r1 { 0.0 }
+    scale_r1 { 0.0 },
+    delta_x  { 0.0 },
+    delta_y  { 0.0 }
   {
   }
 
@@ -44,6 +46,9 @@ public:
     //length_p = fabs(coords_0.p - coords_1.p);
     delta_r = coords_1.r - coords_0.r;
     delta_p = coords_1.p - coords_0.p;
+
+    delta_x = x1 - x0;
+    delta_y = y1 - y0;
   }
 
   double get_radians_0()
@@ -69,9 +74,20 @@ public:
   int compute_length_at(double p)
   {
     double dp = p - coords_0.p;
-    double r = delta_r * (dp / delta_p);
+    //double r = delta_r * (dp / delta_p);
 
-    return coords_0.r + r;
+    int x0, y0, x1, y1;
+
+    coords_0.to_xy(x0, y0);
+    coords_1.to_xy(x1, y1);
+
+    int x = x0 + delta_x * (dp / delta_p);
+    int y = y0 + delta_y * (dp / delta_p);
+
+    PolarCoords coords = coords_0;
+    coords.from_xy(x, y);
+
+    return coords.r;
   }
 
   int compute_length_at_degrees(double p)
@@ -94,6 +110,9 @@ private:
   //double length_p;
   double delta_p;
   double delta_r;
+
+  double delta_x;
+  double delta_y;
 
 };
 
