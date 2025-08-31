@@ -93,9 +93,10 @@ int main(int argc, char *argv[])
   errors += test_degrees(M_PI + (M_PI / 2), 270);
   errors += test_degrees(M_PI * 2, 0);
 
-  errors += test_from_xy( 0, -10,   0, 10);
-  errors += test_from_xy(10, -10,  45, 14);
-  errors += test_from_xy(10,  10, 135, 14);
+  errors += test_from_xy(  0, -10,   0, 10);
+  errors += test_from_xy( 10, -10,  45, 14);
+  errors += test_from_xy( 10,  10, 135, 14);
+  errors += test_from_xy(-10, -10, 315, 14);
 
   errors += test_polar_coords(-99,  99);
   errors += test_polar_coords( 99, -99);

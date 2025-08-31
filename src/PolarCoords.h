@@ -50,11 +50,18 @@ public:
     return fmod(p + (M_PI / 2), M_PI * 2);
   }
 
+  static double adjust_if_negative(double p)
+  {
+    if (p < 0) { p += M_PI * 2; }
+    return p;
+  }
+
   static void from_xy(double &p, int &r, const int x, const int y)
   {
     r = (int)sqrt((double)((x * x) + (y * y)));
     p = atan2(y, x);
 
+    p = adjust_if_negative(p);
     p = rotate_right_90(p);
   }
 

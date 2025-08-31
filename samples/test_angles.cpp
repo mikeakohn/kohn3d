@@ -107,6 +107,7 @@ int main(int argc, char *argv[])
 
   angle.set_center(center_x, center_y);
   angle.set_from_xy(center_x, center_y - 80, center_x + 80, center_y);
+  //angle.set_from_xy(center_x + 80, center_y, center_x, center_y - 80);
 
   angle.dump();
 
@@ -114,6 +115,8 @@ int main(int argc, char *argv[])
   kohn3d.draw_line(angle.coords_1, 0x0000ff);
 
   coords.set_center(center_x, center_y);
+
+printf("FROM %.1f TO %.1f\n", angle.get_degrees_0(), angle.get_degrees_1());
 
   for (double p = angle.get_degrees_0(); p < angle.get_degrees_1(); p += 0.1)
   {
@@ -139,6 +142,8 @@ int main(int argc, char *argv[])
   kohn3d.draw_line(angle.coords_1, 0x0000ff);
 
   coords.set_center(center_x, center_y);
+
+printf("FROM %.1f TO %.1f\n", angle.get_degrees_0(), angle.get_degrees_1());
 
   for (double p = angle.get_degrees_0(); p < angle.get_degrees_1(); p += 0.1)
   {
