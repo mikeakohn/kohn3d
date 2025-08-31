@@ -62,6 +62,28 @@ int test_polar_coords(int x0, int y0)
   return errors;
 }
 
+int test_centered(int x0, int y0, double degrees, int r)
+{
+  int errors = 0;
+  PolarCoords coords;
+
+  coords.set_center(400, 400);
+  coords.from_xy_centered(x0, y0);
+
+  //printf("Test (%d, %d)\n", x0, y0);
+
+  TEST_INT(coords.r, r);
+  TEST_DOUBLE(coords.get_degrees(), degrees);
+
+  int x = 0, y = 0;
+  coords.to_xy_centered(x, y);
+
+  TEST_INT(x, x0);
+  TEST_INT(y, y0);
+
+  return errors;
+}
+
 int main(int argc, char *argv[])
 {
   int errors = 0;
@@ -80,6 +102,10 @@ int main(int argc, char *argv[])
   errors += test_polar_coords( 99,  99);
   errors += test_polar_coords( 96,  45);
   errors += test_polar_coords(-96,  45);
+
+  errors += test_centered(200, 400, 270, 200);
+  errors += test_centered(400, 200,   0, 200);
+  errors += test_centered(400, 600, 180, 200);
 
   printf("Errors: %d  (%s)\n", errors, errors == 0 ? "PASS" : "FAIL");
 

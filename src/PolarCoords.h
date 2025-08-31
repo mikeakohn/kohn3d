@@ -92,7 +92,7 @@ printf("to_xy(%.3f, %.3f)\n",
 
   void from_xy_centered(double &p, int &r, const int x, const int y)
   {
-    from_xy(p, r, center_x - x, center_y - y);
+    from_xy(p, r, x - center_x, y - center_y);
   }
 
   void from_xy_centered(const int x, const int y)
