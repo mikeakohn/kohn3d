@@ -19,7 +19,8 @@ void Angle::dump()
   printf(" -- Angle --\n");
   //printf("  ratio_r=%.2f\n", ratio_r);
   //printf("  length_p=%.2f\n", length_p);
-  printf("  delta_r=%.2f\n", delta_r);
+  printf("  delta_x=%.2f\n", delta_x);
+  printf("  delta_y=%.2f\n", delta_y);
   printf("  delta_p=%.2f\n", delta_p);
   coords_0.dump();
   coords_1.dump();

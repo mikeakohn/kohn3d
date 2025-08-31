@@ -16,11 +16,11 @@ OBJECTS= \
   ../draw_texture \
   ../draw_triangles \
   ../simple_texture \
-  ../test_polar_coords
+  ../test_angles
 
 default: $(OBJECTS)
 
-../%: %.cpp
+../%: %.cpp ../src/Angle.h ../src/PolarCoords.h
 	$(CXX) -o $@ $< \
 	  -L.. -lkohn3d -Isrc -I../src \
 	  $(CFLAGS)

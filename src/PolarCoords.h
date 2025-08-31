@@ -40,20 +40,36 @@ public:
 
   void set_angle_degrees(double value) { p = to_radians(value); }
 
+  static double rotate_left_90(double p)
+  {
+    return fmod(p - (M_PI / 2), M_PI * 2);
+  }
+
+  static double rotate_right_90(double p)
+  {
+    return fmod(p + (M_PI / 2), M_PI * 2);
+  }
+
   static void from_xy(double &p, int &r, const int x, const int y)
   {
-    r = (int)sqrt((float)((x * x) + (y * y)));
+    r = (int)sqrt((double)((x * x) + (y * y)));
     p = atan2(y, x);
 
-    p = fmod(p - (M_PI / 2), M_PI * 2);
+    p = rotate_right_90(p);
   }
 
   static void to_xy(int &x, int &y, const double p, const int r)
   {
-    double p0 = fmod(p - (M_PI / 2), M_PI * 2);
+    double p0 = rotate_left_90(p);
 
-    x = r * cos(p0);
-    y = r * sin(p0);
+#if 0
+printf("to_xy(%.3f, %.3f)\n",
+  (double)r * cos(p0),
+  (double)r * sin(p0));
+#endif
+
+    x = round((double)r * cos(p0));
+    y = round((double)r * sin(p0));
   }
 
   void from_xy(const int x, const int y)

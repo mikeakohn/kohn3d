@@ -27,6 +27,8 @@ int main(int argc, char *argv[])
 
   PolarCoords coords;
 
+  // 1st image.
+
   const int length = 80;
 
   int center_x = width / 4;
@@ -97,6 +99,8 @@ int main(int argc, char *argv[])
   coords.from_xy_centered(p, r, x, y);
   printf("%f %f, %d -> (%d, %d)\n", p, PolarCoords::to_degrees(p), r, x, y);
 
+  // 2nd image.
+
   Angle angle;
 
   center_x = width - center_x;
@@ -120,6 +124,57 @@ int main(int argc, char *argv[])
 
     kohn3d.draw_pixel(coords, 0xff0000);
   }
+
+  // 3rd image.
+
+  center_x = width / 4;
+  center_y = height - (height / 4);
+
+  angle.set_center(center_x, center_y);
+  angle.set_from_xy(center_x, center_y + 45, center_x - 45, center_y - 80);
+
+  angle.dump();
+
+  kohn3d.draw_line(angle.coords_0, 0x00ff00);
+  kohn3d.draw_line(angle.coords_1, 0x0000ff);
+
+  coords.set_center(center_x, center_y);
+
+  for (double p = angle.get_degrees_0(); p < angle.get_degrees_1(); p += 0.1)
+  {
+    int r = angle.compute_length_at_degrees(p);
+
+    coords.set_angle_degrees(p);
+    coords.r = r;
+
+    //kohn3d.draw_pixel(coords, 0xff00ff);
+  }
+
+{
+  double p = angle.get_degrees_0();
+  double dp = (angle.get_degrees_1() - angle.get_degrees_0()) / 10;
+
+  for (int i = 0; i < 10; i++)
+  {
+    int ix, jy;
+    int r = angle.compute_length_at_1(0, ix, jy);
+
+    coords.set_angle_degrees(p);
+    coords.r = r;
+
+p = p + dp;
+
+int xx, yy;
+
+coords.to_xy(xx, yy);
+
+printf("(%d, %d)  (%d, %d)\n", ix, jy, xx, yy);
+
+    kohn3d.draw_pixel(coords, 0xffffff);
+    //kohn3d.draw_pixel(center_x + ix, center_y + jy, 0xffffff);
+    //kohn3d.draw_pixel(center_x + xx, center_y + yy, 0xffffff);
+  }
+}
 
   kohn3d.write_frame();
   kohn3d.finish();

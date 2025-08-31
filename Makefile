@@ -13,6 +13,10 @@ tools:
 samples: default
 	@+make -C samples
 
+#.PHONY: samples
+unit: default
+	@+make -C unit
+
 clean:
 	cd python && make clean
 	@rm -f build/*.o libkohn3d.so
@@ -20,6 +24,7 @@ clean:
 	@rm -f draw_bars draw_cube draw_lines draw_texture draw_triangles
 	@rm -f draw_bmp8 draw_bmp24 draw_projection draw_scaled
 	@rm -f draw_avi8 draw_avi24
-	@rm -f simple_texture test_polar_coords
+	@rm -f simple_texture test_angles
+	@rm -f unit_test_polar_coords
 	@echo "Clean!"
 
