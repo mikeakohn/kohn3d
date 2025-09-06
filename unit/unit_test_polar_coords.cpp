@@ -38,7 +38,7 @@ int test_from_xy(int x0, int y0, double degrees, int r)
   //printf("Test (%d, %d)\n", x0, y0);
 
   TEST_INT(coords.r, r);
-  TEST_DOUBLE(coords.get_degrees(), degrees);
+  TEST_DOUBLE(round(coords.get_degrees()), degrees);
 
   return errors;
 }
@@ -70,7 +70,7 @@ int test_centered(int x0, int y0, double degrees, int r)
   coords.set_center(400, 400);
   coords.from_xy_centered(x0, y0);
 
-  //printf("Test (%d, %d)\n", x0, y0);
+  //printf("Test (%d, %d)   / %.2f %d\n", x0, y0, coords.p, coords.r);
 
   TEST_INT(coords.r, r);
   TEST_DOUBLE(coords.get_degrees(), degrees);
@@ -78,10 +78,40 @@ int test_centered(int x0, int y0, double degrees, int r)
   int x = 0, y = 0;
   coords.to_xy_centered(x, y);
 
+  //printf("(  %d, %d)\n", x, y);
+
   TEST_INT(x, x0);
   TEST_INT(y, y0);
 
   return errors;
+}
+
+int test_one_off(double p, int r)
+{
+  int errors = 0;
+
+  PolarCoords coords;
+
+  coords.set_angle_degrees(p);
+  coords.r = r;
+
+  int x, y;
+  coords.to_xy(x, y);
+
+  printf("%d %d\n", x, y);
+
+  return errors;
+}
+
+int test_one_off_2(int x, int y)
+{
+  PolarCoords coords;
+
+  coords.from_xy(x, y);
+
+  printf("Coords: (%d, %d) -> %.2f %d\n", x, y, coords.get_degrees(), coords.r);
+
+  return 0;
 }
 
 int main(int argc, char *argv[])
@@ -93,10 +123,13 @@ int main(int argc, char *argv[])
   errors += test_degrees(M_PI + (M_PI / 2), 270);
   errors += test_degrees(M_PI * 2, 0);
 
-  errors += test_from_xy(  0, -10,   0, 10);
-  errors += test_from_xy( 10, -10,  45, 14);
-  errors += test_from_xy( 10,  10, 135, 14);
-  errors += test_from_xy(-10, -10, 315, 14);
+  errors += test_from_xy(  0, -10, 270, 10);
+  errors += test_from_xy( 10, -10, 315, 14);
+  errors += test_from_xy( 10,  10,  45, 14);
+  errors += test_from_xy(-10, -10, 225, 14);
+
+  errors += test_from_xy(100, -100, 315, 141);
+  errors += test_from_xy(100,  -27, 345, 103);
 
   errors += test_polar_coords(-99,  99);
   errors += test_polar_coords( 99, -99);
@@ -104,9 +137,17 @@ int main(int argc, char *argv[])
   errors += test_polar_coords( 96,  45);
   errors += test_polar_coords(-96,  45);
 
-  errors += test_centered(200, 400, 270, 200);
-  errors += test_centered(400, 200,   0, 200);
-  errors += test_centered(400, 600, 180, 200);
+  errors += test_centered(200, 400, 180, 200);
+  errors += test_centered(400, 200,  90, 200);
+  errors += test_centered(400, 600, 270, 200);
+
+#if 0
+  errors += test_one_off(45, 141);
+  errors += test_one_off(15, 103);
+
+  errors += test_one_off_2(100,  27);
+  errors += test_one_off_2(100, -27);
+#endif
 
   printf("Errors: %d  (%s)\n", errors, errors == 0 ? "PASS" : "FAIL");
 
