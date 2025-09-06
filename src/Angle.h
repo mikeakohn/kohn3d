@@ -131,6 +131,18 @@ public:
     return compute_length_at(PolarCoords::to_radians(p));
   }
 
+  double get_delta_p() { return delta_p; }
+
+  double get_angle_diff(double p)
+  {
+    return p - coords_0.p;
+  }
+
+  double get_angle_from_offset(double offset, double scale_angle)
+  {
+    return coords_0.p + (offset * scale_angle);
+  }
+
   void dump();
 
   PolarCoords coords_0;

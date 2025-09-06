@@ -16,6 +16,7 @@
 #include <math.h>
 
 #include "Kohn3D.h"
+#include "Angle.h"
 #include "PolarCoords.h"
 
 Kohn3D::Kohn3D(int width, int height, Format format) :
@@ -927,18 +928,25 @@ void Kohn3D::draw_triangle(
   translation(v, x, y, z);
   projection(v);
 
+  texture.set_image_angle(v.x0, v.y0, v.x1, v.y1, v.x2, v.y2);
+  //Angle angle;
+  //angle.set_center(v.x1, v.y1);
+  //angle.set_from_xy(v.x0, v.y0, v.x2, v.y2);
+
+#if 0
   PolarCoords polar_a;
   PolarCoords polar_b;
 
   polar_a.from_xy(v.x1 - v.x0, v.y1 - v.y0);
   polar_a.from_xy(v.x1 - v.x2, v.y1 - v.y2);
+#endif
 
   int center_x = v.x1;
   int center_y = v.y1;
 
   sort_vertexes(v, texture);
 
-  texture.set_scale(polar_a, polar_b);
+  //texture.set_scale(polar_a, polar_b);
 
   if (v.y0 == v.y1)
   {

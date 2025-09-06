@@ -15,6 +15,7 @@
 #include <stdint.h>
 #include <math.h>
 
+#include "Angle.h"
 #include "Picture.h"
 #include "PolarCoords.h"
 
@@ -27,6 +28,8 @@ public:
   int load(const char *filename);
   //void set_scale(int x0, int y0, int x1, int y1, int x2, int y2);
   void set_scale(const PolarCoords &a, const PolarCoords &b);
+
+  void set_image_angle(int x0, int y0, int x1, int y1, int x2, int y2);
 
   uint32_t get_pixel(double angle, int r);
   uint32_t get_pixel(int x, int y);
@@ -185,7 +188,7 @@ private:
     int x2, y2;
   } sorted;
 
-  double angle_xy;
+  //double angle_xy;
   //int length_a;
   //int length_b;
 
@@ -196,8 +199,11 @@ private:
   //double polar_angle_a;
   //double polar_angle_b;
 
-  PolarCoords polar_a;
-  PolarCoords polar_b;
+  //PolarCoords polar_a;
+  //PolarCoords polar_b;
+
+  Angle angle;
+  Angle image_angle;
 
   AreaXY area;
   AreaUV coords_uv;
