@@ -61,13 +61,14 @@ public:
     r = (int)sqrt((double)((x * x) + (y * y)));
     p = atan2(y, x);
 
+    //p = rotate_right_90(p);
     p = adjust_if_negative(p);
-    p = rotate_right_90(p);
   }
 
   static void to_xy(int &x, int &y, const double p, const int r)
   {
-    double p0 = rotate_left_90(p);
+    //const double p0 = rotate_left_90(p);
+    const double p0 = p;
 
 #if 0
 printf("to_xy(%.3f, %.3f)\n",
@@ -94,12 +95,12 @@ printf("to_xy(%.3f, %.3f)\n",
     to_xy(x, y, p, r);
 
     x = center_x + x;
-    y = center_y + y;
+    y = center_y - y;
   }
 
   void from_xy_centered(double &p, int &r, const int x, const int y)
   {
-    from_xy(p, r, x - center_x, y - center_y);
+    from_xy(p, r, x - center_x, center_y - y);
   }
 
   void from_xy_centered(const int x, const int y)
