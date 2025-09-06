@@ -24,8 +24,14 @@ public:
     scale_p  { 0.0 },
     scale_r0 { 0.0 },
     scale_r1 { 0.0 },
-    delta_x  { 0.0 },
-    delta_y  { 0.0 }
+    start_x0 {   0 },
+    start_y0 {   0 },
+    start_x1 {   0 },
+    start_y1 {   0 },
+    //delta_x  { 0.0 },
+    //delta_y  { 0.0 },
+    slope    { 0.0 },
+    b        { 0.0 }
   {
   }
 
@@ -35,6 +41,21 @@ public:
   {
     coords_0.set_center(x, y);
     coords_1.set_center(x, y);
+  }
+
+  static double compute_slope(int x0, int y0, int x1, int y1)
+  {
+    double delta_x = x1 - x0;
+    double delta_y = y1 - y0;
+
+    if (delta_x == 0) { delta_x = 0.0000001; }
+
+    return delta_y / delta_x;
+  }
+
+  static double compute_b(int x0, int y0, double slope)
+  {
+    return (double)y0 - slope * (double)x0;
   }
 
   void set_from_xy(const int x0, const int y0, const int x1, const int y1)
@@ -49,8 +70,17 @@ public:
 
     if (delta_p == 0) { delta_p = 0.0000001; }
 
-    delta_x = x1 - x0;
-    delta_y = y1 - y0;
+    coords_0.to_xy(start_x0, start_y0);
+    coords_1.to_xy(start_x1, start_y1);
+
+    //delta_x = start_x1 - start_x0;
+    //delta_y = start_y1 - start_y0;
+    //if (delta_x == 0) { delta_x = 0.0000001; }
+
+    // y = mx + b
+    // y - mx = b
+    slope = compute_slope(start_x0, start_y0, start_x1, start_y1);
+    b = compute_b(start_x0, start_y0, slope);
   }
 
   double get_radians_0()
@@ -73,53 +103,25 @@ public:
     return coords_1.get_degrees();
   }
 
-  int compute_length_at_1(double p, int &i, int &j)
-  {
-    //double dp = p - coords_0.p;
-
-    int x0, y0;
-    coords_0.to_xy(x0, y0);
-
-static int count = 0;
-#if 0
-printf("%.1f   (%d, %d)\n", (float)count / 10.0, x0, y0);
-printf("%.1f, %.1f\n",
-  (float)x0 + (delta_x * ((float)count / 10.0)),
-  (float)y0 + (delta_y * ((float)count / 10.0))
-);
-#endif
-
-    int x = (float)x0 + (delta_x * ((float)count / 10.0));
-    int y = (float)y0 + (delta_y * ((float)count / 10.0));
-
-count = count + 1;
-
-    i = x;
-    j = y;
-
-    PolarCoords coords = coords_0;
-    coords.from_xy(x, y);
-
-    return coords.r;
-  }
-
   int compute_length_at(double p)
   {
-    double dp = p - coords_0.p;
-
-    int x0, y0;
-
-    coords_0.to_xy_centered(x0, y0);
-
-//printf("%.2f  %d\n", coords_0.p, coords_0.r);
-//printf("%.3f   (%d, %d)\n", dp /delta_p, x0, y0);
-
-    int x = x0 + delta_x * (dp / delta_p);
-    int y = y0 + delta_y * (dp / delta_p);
-
     PolarCoords coords = coords_0;
-    coords.from_xy_centered(x, y);
-//coords.dump();
+    coords.p = p;
+
+    int x0 = 0, y0 = 0, x1, y1;
+
+    coords.to_xy(x1, y1);
+
+    double slope_0 = compute_slope(x0, y0, x1, y1);
+    double b0 = compute_b(x0, y0, slope);
+
+    double x = (b0 - b) / (slope - slope_0);
+    double y = x * slope_0 + b0;
+
+    //double t = x * slope + b;
+    //printf("(%d, %d) and (%d, %d)\n", (int)x, (int)y, (int)x, (int)t);
+
+    coords.from_xy((int)x, (int)y);
 
     return coords.r;
   }
@@ -145,9 +147,15 @@ private:
   double delta_p;
   double delta_r;
 
-  double delta_x;
-  double delta_y;
+  int start_x0;
+  int start_y0;
+  int start_x1;
+  int start_y1;
 
+  //double delta_x;
+  //double delta_y;
+  double slope;
+  double b;
 };
 
 #endif
