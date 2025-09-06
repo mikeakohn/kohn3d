@@ -106,8 +106,7 @@ int main(int argc, char *argv[])
   center_x = width - center_x;
 
   angle.set_center(center_x, center_y);
-  angle.set_from_xy(center_x, center_y - 80, center_x + 80, center_y);
-  //angle.set_from_xy(center_x + 80, center_y, center_x, center_y - 80);
+  angle.set_from_xy(center_x + 80, center_y, center_x, center_y - 80);
 
   angle.dump();
 
@@ -134,7 +133,7 @@ printf("FROM %.1f TO %.1f\n", angle.get_degrees_0(), angle.get_degrees_1());
   center_y = height - (height / 4);
 
   angle.set_center(center_x, center_y);
-  angle.set_from_xy(center_x, center_y + 45, center_x - 45, center_y - 80);
+  angle.set_from_xy(center_x - 45, center_y - 80, center_x, center_y + 45);
 
   angle.dump();
 
@@ -152,34 +151,8 @@ printf("FROM %.1f TO %.1f\n", angle.get_degrees_0(), angle.get_degrees_1());
     coords.set_angle_degrees(p);
     coords.r = r;
 
-    //kohn3d.draw_pixel(coords, 0xff00ff);
+    kohn3d.draw_pixel(coords, 0xff00ff);
   }
-
-{
-  double p = angle.get_degrees_0();
-  double dp = (angle.get_degrees_1() - angle.get_degrees_0()) / 10;
-
-  for (int i = 0; i < 10; i++)
-  {
-    int ix, jy;
-    int r = angle.compute_length_at_1(0, ix, jy);
-
-    coords.set_angle_degrees(p);
-    coords.r = r;
-
-p = p + dp;
-
-int xx, yy;
-
-coords.to_xy(xx, yy);
-
-printf("(%d, %d)  (%d, %d)\n", ix, jy, xx, yy);
-
-    kohn3d.draw_pixel(coords, 0xffffff);
-    //kohn3d.draw_pixel(center_x + ix, center_y + jy, 0xffffff);
-    //kohn3d.draw_pixel(center_x + xx, center_y + yy, 0xffffff);
-  }
-}
 
   kohn3d.write_frame();
   kohn3d.finish();
