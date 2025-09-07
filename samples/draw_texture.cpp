@@ -33,47 +33,40 @@ int main(int argc, char *argv[])
 
   Kohn3D::Triangle triangle;
 
-  triangle.x0 = -50;
-  triangle.y0 = -50;
-  triangle.z0 =  0;
-  triangle.x1 = -50;
-  triangle.y1 =  50;
-  triangle.z1 =  0;
-  triangle.x2 =  100;
-  triangle.y2 =  60;
-  triangle.z2 =  0;
-
-#if 0
-  texture_coins.set_scale(
-    triangle.x0,
-    triangle.y0,
-    triangle.x1,
-    triangle.y1,
-    triangle.x2,
-    triangle.y2);
-#endif
+  triangle.set_vertex_0(0, -150, 0);
+  triangle.set_vertex_1(0,    0, 0);
+  triangle.set_vertex_2(150,  0, 0);
 
   Kohn3D::Rotation rotation;
-
-  //float bg_r = 0;
 
   rotation.rz = 0;
   rotation.ry = 0;
   rotation.rx = 0;
 
+  texture_hello.set_coords(0.0, 0.0,  0.0, 1.0,  1.0, 1.0);
+
   for (float r = 0; r < 6.18 * 3; r += 6.18 / 120)
   {
-#if 0
     rotation.rz = r;
-    rotation.ry = r + 2;
-    rotation.rx = r + 3;
-#endif
 
     kohn3d.clear();
 
-    //bg_r += 0.1;
+    kohn3d.draw_triangle(
+      triangle,
+      rotation,
+      300,
+      300,
+      0,
+      0x00ff00);
 
-    texture_hello.set_coords(0.0, 0.0,  0.0, 1.0,  1.0, 1.0);
+    kohn3d.write_frame();
+  }
+
+  for (float r = 0; r < 6.18 * 3; r += 6.18 / 120)
+  {
+    rotation.rz = r;
+
+    kohn3d.clear();
 
     kohn3d.draw_triangle(
       triangle,

@@ -137,6 +137,21 @@ public:
 
   struct Triangle
   {
+    void set_vertex_0(int x, int y, int z)
+    {
+      x0 = x; y0 = y; z0 = z; 
+    }
+
+    void set_vertex_1(int x, int y, int z)
+    {
+      x1 = x; y1 = y; z1 = z; 
+    }
+
+    void set_vertex_2(int x, int y, int z)
+    {
+      x2 = x; y2 = y; z2 = z; 
+    }
+
     void dump()
     {
       printf("(%d, %d, %d) | (%d, %d, %d) | (%d, %d, %d)\n",

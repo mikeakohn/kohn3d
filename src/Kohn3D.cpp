@@ -291,13 +291,8 @@ void Kohn3D::draw_line(
 
     for (int x = x0; x <= x1; x++)
     {
-      double p;
-      int r;
+      color = texture.get_pixel(x, y0);
 
-      PolarCoords::from_xy(p, r, center_x - x, center_y - y0);
-
-      //color = texture.get_pixel(x, y0);
-      color = texture.get_pixel(p, r);
       draw_pixel(x, y0, color, z);
       z += dz;
     }
