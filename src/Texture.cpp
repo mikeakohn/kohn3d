@@ -44,14 +44,17 @@ uint32_t Texture::get_pixel(double ip, int ir)
   double tp = angle.get_angle_from_offset(diff_p, scale_angle);
 
   int image_length   = image_angle.compute_length_at(ip);
-  int texture_length = image_angle.compute_length_at(tp);
-
-  double scale_length = (double)image_length / (double)texture_length;
+  int texture_length = angle.compute_length_at(tp);
 
   PolarCoords coords;
   coords = angle.coords_0;
   coords.p = tp;
-  coords.r = (double)ir * scale_length;
+
+  //  ir      image_length
+  // ----- =  --------------
+  //   r      texture_length
+
+  coords.r = (double)ir * (double)texture_length / (double)image_length;
 
   int x, y;
   coords.to_xy_centered(x, y);

@@ -924,17 +924,6 @@ void Kohn3D::draw_triangle(
   projection(v);
 
   texture.set_image_angle(v.x0, v.y0, v.x1, v.y1, v.x2, v.y2);
-  //Angle angle;
-  //angle.set_center(v.x1, v.y1);
-  //angle.set_from_xy(v.x0, v.y0, v.x2, v.y2);
-
-#if 0
-  PolarCoords polar_a;
-  PolarCoords polar_b;
-
-  polar_a.from_xy(v.x1 - v.x0, v.y1 - v.y0);
-  polar_a.from_xy(v.x1 - v.x2, v.y1 - v.y2);
-#endif
 
   int center_x = v.x1;
   int center_y = v.y1;
